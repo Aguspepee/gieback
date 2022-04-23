@@ -19,7 +19,7 @@ const usersShema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         unique: true
     },
-    role: {
+    role: { 
         type: String,
         default: "Inspector",
         enum: ["Administrador", "Supervisor", "Inspector", "Asistente"],
