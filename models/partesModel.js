@@ -3,7 +3,7 @@ const errorMessage = require("../util/errorMessage")
 const bcrypt = require("bcrypt")
 
 //creación schema
-const usersShema = mongoose.Schema({
+const usersSchema = mongoose.Schema({
     numero_reporte: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
@@ -25,11 +25,6 @@ const usersShema = mongoose.Schema({
         minlength: [3, errorMessage.GENERAL.min_length]
     },
     detalle_tag: {
-        type: String,
-        required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
-    },
-    unidad: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         minlength: [3, errorMessage.GENERAL.min_length]
@@ -94,10 +89,8 @@ const usersShema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         minlength: [3, errorMessage.GENERAL.min_length]
     },
-    adicionales: {
-        type: Array,
-        required: [true, errorMessage.GENERAL.campo_obligatorio],
-    },
+    adicionales: adicionalesSchema,
+
     equipo_completo: {
         type: Boolean,
         enum: [true, false],
@@ -175,10 +168,69 @@ const usersShema = mongoose.Schema({
         type: Number,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
+    detalles_rx: rxSchema,
 })
+
+//Se declaran los subSchema
+//Este schema contiene todos los datos extra de las actividades de RX 
+const rxSchema = mongoose.Schema({
+    diametro: {
+        type: Number,
+        default: 0
+    },
+    espesor: {
+        type: Number,
+        default: 0
+    },
+    numero_costuras: {
+        type: Number,
+        default: 0
+    },
+    cantidad_placas: {
+        type: Number,
+        default: 0
+    },
+    tipo: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+        minlength: [3, errorMessage.GENERAL.min_length]
+    },
+})
+
+//Este schema contiene todos los datos de los adicionales
+const adicionalesSchema = mongoose.Schema({
+    _id: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+        minlength: [3, errorMessage.GENERAL.min_length]
+    },
+    detalle: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+        minlength: [3, errorMessage.GENERAL.min_length]
+    },
+    item: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+        minlength: [3, errorMessage.GENERAL.min_length]
+    },
+    cantidad: {
+        type: Number,
+        default: 0
+    },
+    unidad_medida: {
+        type: Number,
+        default: 0
+    },
+    precio_unitario: {
+        type: Number,
+        default: 0
+    },
+    precio_total: {
+        type: Number,
+        default: 0
+    },
+})
+
 //creación model
-usersShema.pre("save", function (next) {
-    this.password = bcrypt.hashSync(this.password, 10)
-    next()
-})
-module.exports = mongoose.model("users", usersShema)
+module.exports = mongoose.model("users", usersSchema)
