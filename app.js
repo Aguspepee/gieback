@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Se importa la función de validación del Token
-//app.use(AuthToken)
+app.use(AuthToken)
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

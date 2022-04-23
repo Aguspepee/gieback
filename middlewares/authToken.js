@@ -18,8 +18,8 @@ module.exports = function validateToken(req, res, next) {
               }) 
         }else{
             //La petición es válida, pero si no tiene header, no va a acceder
-            res.status(403).send({message:"No tiene los permisos suficientes para acceder"})
-            console.log(res.json)
+            res.status(403)
+            .send({message:"No tiene los permisos suficientes para acceder"})
         }
     }else{
         next()
