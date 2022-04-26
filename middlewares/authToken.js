@@ -6,13 +6,12 @@ module.exports = function validateToken(req, res, next) {
     if(req.path != "/users/login"){
         if(req.headers.authorization){
             let token = req.headers.authorization.split(" ")[1]
-            console.log(token)
-            console.log(CONFIG.SECRET_KEY)
              jwt.verify(token,CONFIG.SECRET_KEY,function(error,decoded){
                 if(error){
                   res.status(500).json({message:error.message})
+                  //console.log("el token no era válido")
                 }else{
-                  console.log(decoded)
+                  //console.log("lo decodificó",decoded)
                   next()
                 }
               }) 

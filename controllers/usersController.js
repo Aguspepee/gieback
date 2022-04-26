@@ -1,6 +1,7 @@
 const usersModel = require("../models/usersModel")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const CONFIG = require("../config/config")
 
 module.exports = {
     getAll: async function (req, res, next) {
@@ -55,18 +56,26 @@ module.exports = {
         }
     },
 
-    islogged: async function (req, res, next) {
+    whoami: async function (req, res, next) {
+        
+        let id
+        let token = req.headers.authorization.split(" ")[1]
+        console.log("token",token)
+              jwt.verify(token,CONFIG.SECRET_KEY,function(error,decoded){
+                if(error){
+                  res.status(500).json({message:error.message})
+                  console.log("el token no era válido")
+                }else{
+                  console.log("lo decodificó",decoded)
+                  id = decoded.userId
+                  console.log("La ID es",id)
+                  
+                }
+              }) 
+              
         try {
-            const user = await usersModel.findOne({ email: req.body.email })
-            if (!user) {
-                return res.json({ error: true, message: "Email incorrecto" })
-            }
-            if (bcrypt.compareSync(req.body.password, user.password)) {
-                const token = jwt.sign({ userId: user._id }, req.app.get("secretKey"), { expiresIn: "1h" })
-                return res.json({ error: false, message: "Se inició sesión" , token: token, user:user })
-            } else {
-                return res.json({ error: true, message: "Contraseña incorrecta" })
-            }
+            const user = await usersModel.find({_id: id})
+            res.json(user)
         } catch (e) {
             console.log(e)
             e.status = 400

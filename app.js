@@ -10,6 +10,7 @@ var AuthToken = require("./middlewares/authToken")
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/usersRouter');
+var contractsRouter = require('./routes/contractsRouter');
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.use(AuthToken)
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/contracts', contractsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
