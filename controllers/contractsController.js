@@ -18,14 +18,15 @@ module.exports = {
         console.log(req.body.unidades)
         try {
             const contract = new contractsModel({
-                
                 nombre: req.body.nombre,
                 descripcion: req.body.descripcion,
                 tipo: req.body.tipo,
                 cliente: req.body.cliente,
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin, 
-                unidades: req.body.unidades   
+                unidades: req.body.unidades,   
+                items: req.body.items,
+                certificantes: req.body.certificantes  
             })
             const document = await contract.save()
             console.log("se creó", document)

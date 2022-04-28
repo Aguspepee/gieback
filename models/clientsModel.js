@@ -21,8 +21,6 @@ const clientsShema = mongoose.Schema({
     },
     telefono: { 
         type: String,
-        default: "Inspector",
-        enum: ["Administrador", "Supervisor", "Inspector", "Asistente"],
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     abreviatura: {
@@ -41,7 +39,5 @@ const clientsShema = mongoose.Schema({
     },
 })
 //creación model
-clientsShema.pre("save", function (next) {
 
-})
 module.exports = mongoose.model("clients", clientsShema)
