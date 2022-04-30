@@ -17,7 +17,7 @@ const clientsShema = mongoose.Schema({
     email: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        unique: true
+        //unique: true
     },
     telefono: { 
         type: String,

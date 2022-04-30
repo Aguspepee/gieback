@@ -24,9 +24,12 @@ module.exports = {
                 cliente: req.body.cliente,
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin, 
+                activo: req.body.activo,
                 unidades: req.body.unidades,   
                 items: req.body.items,
-                certificantes: req.body.certificantes  
+                certificantes: req.body.certificantes , 
+                campos: req.body.campos
+
             })
             const document = await contract.save()
             console.log("se creó", document)

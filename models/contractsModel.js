@@ -27,6 +27,49 @@ const certificantesSchema = mongoose.Schema({
     },
 })
 
+const camposSchema = mongoose.Schema({
+    adicionales: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+    cantidad_placas: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+    equipo_completo: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+    espesor: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+    numero_costuras: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+    numero_orden: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+    numero_reporte: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+    tipo_ensayo: { //está en RX
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
+})
+
 const itemsSchema = mongoose.Schema({
     descripcion: {
         type: String,
@@ -90,22 +133,20 @@ const contractsShema = mongoose.Schema({
         type: Date,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
-
+    activo: {
+        type: Boolean,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
     items: [itemsSchema],
-
     unidades: [unidadesSchema],
-
     certificantes: [certificantesSchema],
-
+    campos: [camposSchema]
 })
-
-
-
-
 
 //creación model
 contractsShema.pre("save", function (next) {
     // this.password = bcrypt.hashSync(this.password, 10)
     next()
 })
+
 module.exports = mongoose.model("contracts", contractsShema)

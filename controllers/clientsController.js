@@ -5,8 +5,21 @@ const CONFIG = require("../config/config")
 
 module.exports = {
     getAll: async function (req, res, next) {
+        console.log("entro")
         try {
             const documents = await clientsModel.find()
+            res.json(documents)
+            console.log()
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    getNames: async function (req, res, next) {
+        try {
+            const documents = await clientsModel.find({}, { nombre: 1, _id: 0 })
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -22,7 +35,7 @@ module.exports = {
                 nombre: req.body.nombre,
                 direccion: req.body.direccion,
                 email: req.body.email,
-               //telefono: req.body.password,
+               telefono: req.body.telefono,
                 abreviatura: req.body.abreviatura,
                 //deleted: req.body.deleted,
                 //image: req.body.image,
