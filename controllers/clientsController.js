@@ -20,7 +20,9 @@ module.exports = {
     getNames: async function (req, res, next) {
         try {
             const documents = await clientsModel.find({}, { nombre: 1, _id: 0 })
-            res.json(documents)
+            let names = documents.map((documents) => documents.nombre)
+            console.log(names)
+            res.json(names)
         } catch (e) {
             console.log(e)
             e.status = 400
@@ -35,7 +37,7 @@ module.exports = {
                 nombre: req.body.nombre,
                 direccion: req.body.direccion,
                 email: req.body.email,
-               telefono: req.body.telefono,
+                telefono: req.body.telefono,
                 abreviatura: req.body.abreviatura,
                 //deleted: req.body.deleted,
                 //image: req.body.image,
@@ -45,6 +47,19 @@ module.exports = {
             res.json(document);
         } catch (e) {
             console.log(e.message)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    edit: async function (req, res, next) {
+        try {
+            const documents = await clientsModel.find({}, { nombre: 1, _id: 0 })
+            let names = documents.map((documents) => documents.nombre)
+            console.log(names)
+            res.json(names)
+        } catch (e) {
+            console.log(e)
             e.status = 400
             next(e)
         }
