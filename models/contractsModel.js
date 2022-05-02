@@ -5,12 +5,10 @@ const unidadesSchema = mongoose.Schema({
     nombre: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
     abreviatura: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        maxlength: [3, errorMessage.GENERAL.min_length]
     },
 })
 
@@ -18,12 +16,10 @@ const certificantesSchema = mongoose.Schema({
     nombre: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
     apellido: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
 })
 
@@ -108,22 +104,18 @@ const contractsShema = mongoose.Schema({
     nombre: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
     descripcion: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
     tipo: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
     cliente: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
     fecha_inicio: {
         type: Date,

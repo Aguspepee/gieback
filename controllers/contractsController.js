@@ -37,6 +37,17 @@ module.exports = {
         }
     },
 
+    getOne: async function (req, res, next) {
+        try {
+            const documents = await contractsModel.findById(req.params.id)
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     create: async function (req, res, next) {
         console.log(req.body.unidades)
         try {
@@ -53,6 +64,42 @@ module.exports = {
                 certificantes: req.body.certificantes,
                 campos: req.body.campos
 
+            })
+            const document = await contract.save()
+            console.log("se creó", document)
+            res.status(201).json(document);
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    empty: async function (req, res, next) {
+        console.log("entroooo")
+        try {
+            const contract = new contractsModel({
+                nombre: " ",
+                descripcion: " ",
+                tipo: " ",
+                cliente: " ",
+                fecha_inicio: new Date(),
+                fecha_fin: new Date(),
+                activo: true,
+                unidades: [],
+                items: [],
+                certificantes: [],
+                campos: {
+                    numero_reporte: true,
+                    numero_orden: true,
+                    adicionales: true,
+                    equipo_completo: true,
+                    diametro: false,
+                    espesor: false,
+                    numero_costuras: false,
+                    cantidad_placas: false,
+                    tipo_ensayo: false,
+                  }
             })
             const document = await contract.save()
             console.log("se creó", document)
