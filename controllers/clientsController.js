@@ -30,6 +30,17 @@ module.exports = {
         }
     },
 
+    getOne: async function (req, res, next) {
+        try {
+            const documents = await clientsModel.findById(req.params.id)
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     create: async function (req, res, next) {
         console.log("entro")
         try {
@@ -39,6 +50,7 @@ module.exports = {
                 email: req.body.email,
                 telefono: req.body.telefono,
                 abreviatura: req.body.abreviatura,
+                active: req.body.active,
                 //deleted: req.body.deleted,
                 //image: req.body.image,
             })
@@ -53,11 +65,30 @@ module.exports = {
     },
 
     edit: async function (req, res, next) {
+        console.log(req.params.id)
         try {
-            const documents = await clientsModel.find({}, { nombre: 1, _id: 0 })
-            let names = documents.map((documents) => documents.nombre)
-            console.log(names)
-            res.json(names)
+            const client = {
+                nombre: req.body.nombre,
+                direccion: req.body.direccion,
+                email: req.body.email,
+                telefono: req.body.telefono,
+                abreviatura: req.body.abreviatura,
+                active: req.body.active
+            }
+            const document = await clientsModel.findByIdAndUpdate(req.params.id, client ,{new: true})
+            console.log("se actualizó", document)
+            res.status(201).json(document);
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        } 
+    },
+
+    delete: async function (req, res, next) {
+        try {
+            const documents = await clientsModel.deleteOne({_id:req.params.id})
+            res.json(documents)
         } catch (e) {
             console.log(e)
             e.status = 400

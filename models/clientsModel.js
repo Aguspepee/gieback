@@ -33,6 +33,11 @@ const clientsShema = mongoose.Schema({
         enum: [true, false],
         default: false
     },
+    active: {
+        type: Boolean,
+        enum: [true, false],
+        default: true
+    },
     image: {
         type: String,
         maxlength: [3, errorMessage.GENERAL.min_length]

@@ -6,7 +6,13 @@ const clientsController = require("../controllers/clientsController.js")
 /* GET clients listing. */
 router.get('/', clientsController.getAll);
 router.get('/names', clientsController.getNames);
-router.post('/', clientsController.create);
+router.get('/one/:id', clientsController.getOne);
+
+router.post('/', clientsController.create); 
+
+router.put('/edit/:id', clientsController.edit);
+ 
+router.delete('/:id', clientsController.delete);
 
 module.exports = router;
 
