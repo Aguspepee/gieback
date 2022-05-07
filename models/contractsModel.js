@@ -109,7 +109,7 @@ const contractsShema = mongoose.Schema({
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
-    tipo: {
+    area: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },

@@ -28,7 +28,7 @@ module.exports = {
 
     getList: async function (req, res, next) {
         try {
-            const documents = await contractsModel.find({}, { nombre: 1, cliente: 1, fecha_inicio: 1, tipo: 1, activo: 1 })
+            const documents = await contractsModel.find({}, { nombre: 1, cliente: 1, fecha_inicio: 1, area: 1, activo: 1 })
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -54,7 +54,7 @@ module.exports = {
             const contract = new contractsModel({
                 nombre: req.body.nombre,
                 descripcion: req.body.descripcion,
-                tipo: req.body.tipo,
+                area: req.body.area,
                 cliente: req.body.cliente,
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin,
@@ -81,7 +81,7 @@ module.exports = {
             const contract = new contractsModel({
                 nombre: " ",
                 descripcion: " ",
-                tipo: " ",
+                area: " ",
                 cliente: " ",
                 fecha_inicio: new Date(),
                 fecha_fin: new Date(),
@@ -117,7 +117,7 @@ module.exports = {
             const contract = {
                 nombre: req.body.nombre,
                 descripcion: req.body.descripcion,
-                tipo: req.body.tipo,
+                area: req.body.area,
                 cliente: req.body.cliente,
                 fecha_inicio: req.body.fecha_inicio,
                 fecha_fin: req.body.fecha_fin,
@@ -135,7 +135,7 @@ module.exports = {
             console.log(e)
             e.status = 400
             next(e)
-        }
+        } 
     },
 
     delete: async function (req, res, next) {

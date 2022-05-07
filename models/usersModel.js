@@ -4,12 +4,12 @@ const bcrypt = require("bcrypt")
 
 //creación schema
 const usersShema = mongoose.Schema({
-    firstName: {
+    nombre: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         minlength: [3, errorMessage.GENERAL.min_length]
     },
-    lastName: {
+    apellido: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         minlength: [3, errorMessage.GENERAL.min_length]
@@ -24,6 +24,12 @@ const usersShema = mongoose.Schema({
         default: "Inspector",
         enum: ["Administrador", "Supervisor", "Inspector", "Asistente"],
         required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
+    area: { 
+        type: String,
+        default: "Inspección",
+        //enum: ["Inspección", "Radiografía"],
+        //required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     password: {
         type: String,

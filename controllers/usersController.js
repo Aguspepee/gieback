@@ -15,6 +15,39 @@ module.exports = {
         }
     },
 
+    getNames: async function (req, res, next) {
+        try {
+            const documents = await usersModel.find({}, { nombre: 1 })
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    getList: async function (req, res, next) {
+        try {
+            const documents = await usersModel.find({}, { nombre: 1, cliente: 1, fecha_inicio: 1, tipo: 1, activo: 1 })
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    getOne: async function (req, res, next) {
+        try {
+            const documents = await usersModel.findById(req.params.id)
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     login: async function (req, res, next) {
         try {
             const user = await usersModel.findOne({ email: req.body.email })
@@ -23,7 +56,7 @@ module.exports = {
             }
             if (bcrypt.compareSync(req.body.password, user.password)) {
                 const token = jwt.sign({ userId: user._id }, req.app.get("secretKey"), { expiresIn: "1h" })
-                return res.json({ error: false, message: "Se inició sesión" , token: token, user:user })
+                return res.json({ error: false, message: "Se inició sesión", token: token, user: user })
             } else {
                 return res.json({ error: true, message: "Contraseña incorrecta" })
             }
@@ -37,8 +70,8 @@ module.exports = {
     register: async function (req, res, next) {
         try {
             const user = new usersModel({
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
+                nombre: req.body.nombre,
+                apellido: req.body.apellido,
                 email: req.body.email,
                 password: req.body.password,
                 role: req.body.roles,
@@ -49,7 +82,7 @@ module.exports = {
             const document = await user.save()
             console.log("se creó", document)
             res.status(201).json(document);
-        } catch (e) { 
+        } catch (e) {
             console.log(e)
             e.status = 400
             next(e)
@@ -57,25 +90,59 @@ module.exports = {
     },
 
     whoami: async function (req, res, next) {
-        
+
         let id
         let token = req.headers.authorization.split(" ")[1]
-        console.log("token",token)
-              jwt.verify(token,CONFIG.SECRET_KEY,function(error,decoded){
-                if(error){
-                  res.status(500).json({message:error.message})
-                  console.log("el token no era válido")
-                }else{
-                  console.log("lo decodificó",decoded)
-                  id = decoded.userId
-                  console.log("La ID es",id)
-                  
-                }
-              }) 
-              
+        console.log("token", token)
+        jwt.verify(token, CONFIG.SECRET_KEY, function (error, decoded) {
+            if (error) {
+                res.status(500).json({ message: error.message })
+                console.log("el token no era válido")
+            } else {
+                console.log("lo decodificó", decoded)
+                id = decoded.userId
+                console.log("La ID es", id)
+
+            }
+        })
+
         try {
-            const user = await usersModel.find({_id: id})
+            const user = await usersModel.find({ _id: id })
             res.json(user)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    edit: async function (req, res, next) {
+        console.log(req.params.id)
+        try {
+            const contract = {
+                nombre: req.body.nombre,
+                apellido: req.body.apellido,
+                email: req.body.email,
+                area: req.body.area,
+                role: req.body.role,
+                active: req.body.active,
+                deleted: req.body.deleted,
+                policy: req.body.policy
+            }
+            const document = await usersModel.findByIdAndUpdate(req.params.id, contract, { new: true })
+            console.log("se actualizó", document)
+            res.status(201).json(document);
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    delete: async function (req, res, next) {
+        try {
+            const documents = await usersModel.deleteOne({ _id: req.params.id })
+            res.json(documents)
         } catch (e) {
             console.log(e)
             e.status = 400
