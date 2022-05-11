@@ -1,7 +1,9 @@
-const usersModel = require("../models/usersModel")
-const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
-const CONFIG = require("../config/config")
+const usersModel = require("../models/usersModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const CONFIG = require("../config/config");
+//const multer = require('multer');
+//const upload =multer({dest: 'uploads/'});
 
 module.exports = {
     getAll: async function (req, res, next) {
@@ -68,6 +70,7 @@ module.exports = {
     },
 
     register: async function (req, res, next) {
+        console.log(req.file)
         try {
             const user = new usersModel({
                 nombre: req.body.nombre,
@@ -77,7 +80,8 @@ module.exports = {
                 role: req.body.roles,
                 active: req.body.active,
                 deleted: req.body.deleted,
-                policy: req.body.policy
+                policy: req.body.policy,
+                image: req.file.path
             })
             const document = await user.save()
             console.log("se creó", document)
@@ -143,6 +147,24 @@ module.exports = {
         try {
             const documents = await usersModel.deleteOne({ _id: req.params.id })
             res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    image: async function (req, res, next) {
+        console.log("entro")
+        console.log(req.params.id)
+        console.log(req.file)
+        try {
+            const contract = {
+                image: req.file.path
+            }
+            const document = await usersModel.findByIdAndUpdate(req.params.id, contract, { new: true })
+            console.log("se actualizó", document)
+            res.status(201).json(document);
         } catch (e) {
             console.log(e)
             e.status = 400

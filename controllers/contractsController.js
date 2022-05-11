@@ -17,8 +17,10 @@ module.exports = {
 
     getNames: async function (req, res, next) {
         try {
-            const documents = await contractsModel.find({}, { nombre: 1 })
-            res.json(documents)
+            const documents = await contractsModel.find({}, { nombre: 1, _id: 0 })
+            let names = documents.map((documents) => documents.nombre)
+            console.log(names)
+            res.json(names)
         } catch (e) {
             console.log(e)
             e.status = 400
@@ -28,6 +30,26 @@ module.exports = {
 
     getList: async function (req, res, next) {
         try {
+            const documents = await contractsModel.find({}, {
+                nombre: 1,
+                cliente: 1,
+                fecha_inicio: 1,
+                area: 1,
+                activo: 1,
+                campos: 1,
+                "items.descripcion_servicio": 1
+            })
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+
+    getItems: async function (req, res, next) {
+        try {
             const documents = await contractsModel.find({}, { nombre: 1, cliente: 1, fecha_inicio: 1, area: 1, activo: 1 })
             res.json(documents)
         } catch (e) {
@@ -36,6 +58,9 @@ module.exports = {
             next(e)
         }
     },
+
+
+
 
     getOne: async function (req, res, next) {
         try {
@@ -99,7 +124,7 @@ module.exports = {
                     numero_costuras: false,
                     cantidad_placas: false,
                     tipo_ensayo: false,
-                  }
+                }
             })
             const document = await contract.save()
             console.log("se creó", document)
@@ -128,19 +153,19 @@ module.exports = {
                 campos: req.body.campos
 
             }
-            const document = await contractsModel.findByIdAndUpdate(req.params.id, contract ,{new: true})
+            const document = await contractsModel.findByIdAndUpdate(req.params.id, contract, { new: true })
             console.log("se actualizó", document)
             res.status(201).json(document);
         } catch (e) {
             console.log(e)
             e.status = 400
             next(e)
-        } 
+        }
     },
 
     delete: async function (req, res, next) {
         try {
-            const documents = await contractsModel.deleteOne({_id:req.params.id})
+            const documents = await contractsModel.deleteOne({ _id: req.params.id })
             res.json(documents)
         } catch (e) {
             console.log(e)

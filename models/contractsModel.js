@@ -67,7 +67,7 @@ const camposSchema = mongoose.Schema({
 })
 
 const itemsSchema = mongoose.Schema({
-    descripcion: {
+    descripcion_servicio: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         minlength: [3, errorMessage.GENERAL.min_length]
@@ -82,7 +82,7 @@ const itemsSchema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         minlength: [3, errorMessage.GENERAL.min_length]
     },
-    subtipo_actividad: { //gamagrafía o inspección
+    clase: { //gamagrafía o inspección
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         minlength: [3, errorMessage.GENERAL.min_length]

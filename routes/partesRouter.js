@@ -5,9 +5,8 @@ const partesController = require("../controllers/partesController.js")
 
 /* GET partes listing. */
 router.get('/', partesController.getAll);
-router.post('/register', partesController.register);
-router.post('/login', partesController.login);
-router.post('./islogged', partesController.islogged)
+
+router.post('/create', partesController.create);
 
 module.exports = router;
 

@@ -12,6 +12,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/usersRouter');
 var contractsRouter = require('./routes/contractsRouter');
 var clientsRouter = require('./routes/clientsRouter');
+var partesRouter = require('./routes/partesRouter')
 
 var app = express();
 
@@ -20,6 +21,9 @@ app.set("secretKey", "gie2022")
 
 //CORS
 app.use(cors())
+
+//Setea la ubicación de las imagenes
+app.use('/uploads',express.static('uploads'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,6 +42,9 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/contracts', contractsRouter);
 app.use('/clients/',clientsRouter)
+app.use('/partes/',partesRouter)
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

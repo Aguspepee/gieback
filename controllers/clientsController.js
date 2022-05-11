@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const CONFIG = require("../config/config")
 
+
 module.exports = {
     getAll: async function (req, res, next) {
         console.log("entro")
@@ -89,6 +90,24 @@ module.exports = {
         try {
             const documents = await clientsModel.deleteOne({_id:req.params.id})
             res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    image: async function (req, res, next) {
+        console.log("entro")
+        console.log(req.params.id)
+        console.log(req.file)
+        try {
+            const contract = {
+                image: req.file.path
+            }
+            const document = await clientsModel.findByIdAndUpdate(req.params.id, contract, { new: true })
+            console.log("se actualizó", document)
+            res.status(201).json(document);
         } catch (e) {
             console.log(e)
             e.status = 400

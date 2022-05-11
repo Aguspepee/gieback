@@ -31,6 +31,7 @@ const usersShema = mongoose.Schema({
         //enum: ["Inspección", "Radiografía"],
         //required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
+
     password: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
@@ -50,6 +51,9 @@ const usersShema = mongoose.Schema({
         type: Boolean,
         enum: [true, false],
         default: false
+    },
+    image: { 
+        type: String,
     },
 })
 //creación model

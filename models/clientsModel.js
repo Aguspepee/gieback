@@ -1,6 +1,6 @@
 const mongoose = require("../bin/mongodb")
 const errorMessage = require("../util/errorMessage")
-const bcrypt = require("bcrypt")
+
 
 //creación schema
 const clientsShema = mongoose.Schema({
