@@ -17,14 +17,14 @@ module.exports = {
         try {
 
             //Se busca el contrato en la colección de contratos
-            const contrato = await contractsModel.find({nombre:req.body.contrato})
-            console.log("el contrato",contrato)
+            const contrato = await contractsModel.find({ nombre: req.body.contrato })
+            //console.log("el contrato",contrato)
             let items = contrato[0].items
-            console.log("Los ITEMS", items)
+            // console.log("Los ITEMS", items)
             let item = items.filter(items => items.descripcion_servicio === req.body.descripcion_servicio)[0]
-            console.log("El item", item)
+            //console.log("El item", item)
 
-
+            console.log("ADICIONALES", req.body.adicionales)
             const parte = new partesModel({
 
                 //Datos que vienen de la req
@@ -49,17 +49,15 @@ module.exports = {
                     cantidad: req.body.cantidad,
                     unidad_medida: item.unidad_medida,
                     valor_unitario: item.valor,
-                    valor_total: item.valor*req.body.cantidad
-                },
-                {
-                    descripcion_servicio: item.descripcion,
-                    codigo_servicio: item.codigo_servicio,
-                    unidad_medida: item.unidad_medida,
-                    valor_unitario: item.valor,
-                }]
+                    valor_total: item.valor * req.body.cantidad
+                }, req.body.adicionales[0]
+                ],
+                
+                //Detalles (por lo general de RX)
+                detalles: req.body.detalles
             })
-            const document = await parte.save().then(
-            )
+            const document = await parte.save().then()
+            console.log("EL DOCUMENTO", document)
             res.status(201).json(document);
         } catch (e) {
             console.log(e)

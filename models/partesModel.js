@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt")
 
 //Se declaran los subSchema
 //Este schema contiene todos los datos extra de las actividades de RX 
-const rxSchema = mongoose.Schema({
+const detallesSchema = mongoose.Schema({
     diametro: {
         type: Number,
         default: 0
@@ -155,7 +155,7 @@ const partesSchema = mongoose.Schema({
     valor_total: {
         type: Number,
     },
-    detalles_rx: rxSchema,
+    detalles: detallesSchema,
 })
 
 //creación model

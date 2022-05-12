@@ -39,6 +39,11 @@ const camposSchema = mongoose.Schema({
         enum: [true, false],
         default: true,
     },
+    diametro: {
+        type: Boolean,
+        enum: [true, false],
+        default: true,
+    },
     espesor: {
         type: Boolean,
         enum: [true, false],
@@ -59,7 +64,7 @@ const camposSchema = mongoose.Schema({
         enum: [true, false],
         default: true,
     },
-    tipo_ensayo: { //está en RX
+    tipo_rx: { //está en RX
         type: Boolean,
         enum: [true, false],
         default: true,
