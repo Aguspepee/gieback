@@ -83,7 +83,7 @@ module.exports = {
             console.log(e)
             e.status = 400
             next(e)
-        } 
+        }  
     },
 
     delete: async function (req, res, next) {
