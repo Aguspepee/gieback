@@ -96,6 +96,7 @@ module.exports = {
     whoami: async function (req, res, next) {
 
         let id
+        let exp
         let token = req.headers.authorization.split(" ")[1]
         console.log("token", token)
         jwt.verify(token, CONFIG.SECRET_KEY, function (error, decoded) {
@@ -104,6 +105,7 @@ module.exports = {
                 console.log("el token no era válido")
             } else {
                 console.log("lo decodificó", decoded)
+                exp = decoded.exp
                 id = decoded.userId
                 console.log("La ID es", id)
 
@@ -112,7 +114,7 @@ module.exports = {
 
         try {
             const user = await usersModel.find({ _id: id })
-            res.json(user)
+            res.json({exp:exp,...user})
         } catch (e) {
             console.log(e)
             e.status = 400

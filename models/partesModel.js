@@ -1,6 +1,7 @@
 const mongoose = require("../bin/mongodb")
 const errorMessage = require("../util/errorMessage")
 const bcrypt = require("bcrypt")
+const { stringify } = require("jade/lib/utils")
 
 //Se declaran los subSchema
 //Este schema contiene todos los datos extra de las actividades de RX 
@@ -78,6 +79,9 @@ const partesSchema = mongoose.Schema({
     tag_detalle: {
         type: String,
     },
+    unidad:{
+        type: String
+    },
 
     //DATOS QUE SALEN DEL CONTRATO
     contrato: {
@@ -94,6 +98,7 @@ const partesSchema = mongoose.Schema({
     },
     fecha_carga: {
         type: Date,
+        default: new Date()
     },
     fecha_inspeccion: {
         type: Date,

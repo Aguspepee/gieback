@@ -23,7 +23,7 @@ app.set("secretKey", "gie2022")
 app.use(cors())
 
 //Setea la ubicación de las imagenes
-app.use('/uploads',express.static('uploads'));
+app.use('/clients-images',express.static('clients-images'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

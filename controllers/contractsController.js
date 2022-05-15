@@ -37,8 +37,11 @@ module.exports = {
                 area: 1,
                 activo: 1,
                 campos: 1,
+                unidades: 1,
+                certificantes: 1,
                 "items.descripcion_servicio": 1,
-                "items.clase": 1
+                "items.clase": 1,
+                "items.unidad_medida":1
             })
             res.json(documents)
         } catch (e) {
