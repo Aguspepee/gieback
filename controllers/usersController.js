@@ -81,7 +81,7 @@ module.exports = {
                 active: req.body.active,
                 deleted: req.body.deleted,
                 policy: req.body.policy,
-                image: req.file.path
+                //image: req.file.path
             })
             const document = await user.save()
             console.log("se creó", document)

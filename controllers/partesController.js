@@ -56,8 +56,7 @@ module.exports = {
 
             //Se busca el contrato en la colección de contratos
             const contrato = await contractsModel.find({ nombre: req.body.contrato })
-            // let items = contrato[0].items
-            console.log("contrato",contrato[0].items)
+            console.log("EL CONTRATOOOOO",contrato)
             let item = contrato[0].items.filter(items => items.descripcion_servicio === req.body.descripcion_servicio)[0]
             
             //En base a los subitems que vienen en el body, se busca la información completa
@@ -100,9 +99,9 @@ module.exports = {
                 unidad: req.body.unidad,
 
                 //Datos que salen del contrato
-                contrato: contrato.nombre,
-                cliente: contrato.cliente,
-                area: contrato.area,
+                contrato: contrato[0].nombre,
+                cliente: contrato[0].cliente,
+                area: contrato[0].area,
 
                 //Datos que salen del item del contrato
                 items: items,
@@ -169,9 +168,9 @@ module.exports = {
                 unidad: req.body.unidad,
 
                 //Datos que salen del contrato
-                contrato: contrato.nombre,
-                cliente: contrato.cliente,
-                area: contrato.area,
+                contrato: contrato[0].nombre,
+                cliente: contrato[0].cliente,
+                area: contrato[0].area,
 
                 //Datos que salen del item del contrato
                 items: items,

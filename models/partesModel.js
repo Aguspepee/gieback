@@ -86,9 +86,11 @@ const partesSchema = mongoose.Schema({
     //DATOS QUE SALEN DEL CONTRATO
     contrato: {
         type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     cliente: {
         type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     area: { //Es RX, Inspección u Otro
         type: String,
