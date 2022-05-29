@@ -3,17 +3,16 @@ const jwt = require("jsonwebtoken")
 const CONFIG = require("../config/config")
 
 module.exports = function validateToken(req, res, next) {
-  console.log("tokeeeen")
      if(req.path != "/users/login"){
         if(req.headers.authorization){
             let token = req.headers.authorization.split(" ")[1]
              jwt.verify(token,CONFIG.SECRET_KEY,function(error,decoded){
                 if(error){
-                  console.log("el token no era válido")
+                 // console.log("el token no era válido")
                   res.status(500).send({message:error.message})
                   
                 }else{
-                  console.log("lo decodificó",decoded)
+                 // console.log("lo decodificó",decoded)
                   next()
                 }
               }) 
