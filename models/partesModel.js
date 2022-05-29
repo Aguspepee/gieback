@@ -1,7 +1,6 @@
 const mongoose = require("../bin/mongodb")
 const errorMessage = require("../util/errorMessage")
-const bcrypt = require("bcrypt")
-const { stringify } = require("jade/lib/utils")
+var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 //Se declaran los subSchema
 //Este schema contiene todos los datos extra de las actividades de RX 
@@ -165,5 +164,6 @@ const partesSchema = mongoose.Schema({
     detalles: detallesSchema,
 })
 
+partesSchema.plugin(aggregatePaginate);
 //creación model
 module.exports = mongoose.model("partes", partesSchema)

@@ -14,23 +14,42 @@ module.exports = {
     },
 
     getRestricted: async function (req, res, next) {
+        const {page,rowsPerPage} = req.query
+        const options = {
+            page: page,
+            limit: rowsPerPage,
+          };
+          console.log(options)
         try {
-            const documents = await partesModel.find({}, {
-                numero_reporte: 1,
-                numero_orden: 1,
-                inspector: 1,
-                tag: 1,
-                tag_detalle: 1,
-                contrato: 1,
-                cliente: 1,
-                área: 1,
-                cliente:1, 
-                "items.descripcion_servicio": 1,
-                "items.codigo_servicio": 1,
-                "items.clase": 1,
-                "items.cantidad": 1,
-                "items.unidad_medida": 1,
-            })
+            const documents = await partesModel.aggregate([
+                {
+                  '$project': {
+                    'numero_reporte': 1, 
+                    'numero_orden': 1, 
+                    'inspector': 1, 
+                    'tag': 1, 
+                    'tag_detalle': 1, 
+                    'contrato': 1, 
+                    'cliente': 1, 
+                    'área': 1, 
+                    'unidad': 1, 
+                    'fecha_carga': 1, 
+                    'semana_carga': {
+                      '$week': '$fecha_carga'
+                    }, 
+                    'fecha_inspección': 1, 
+                    'semana_inspeccion': {
+                      '$week': '$fecha_inspeccion'
+                    }, 
+                    'informe_realizado': 1, 
+                    'items.descripcion_servicio': 1, 
+                    'items.codigo_servicio': 1, 
+                    'items.clase': 1, 
+                    'items.cantidad': 1, 
+                    'items.unidad_medida': 1
+                  }
+                }
+              ]).paginateExec(options)
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -55,10 +74,11 @@ module.exports = {
         try {
 
             //Se busca el contrato en la colección de contratos
-            const contrato = await contractsModel.find({ nombre: req.body.contrato })
-            console.log("EL CONTRATOOOOO",contrato)
-            let item = contrato[0].items.filter(items => items.descripcion_servicio === req.body.descripcion_servicio)[0]
             
+            const contrato = await contractsModel.find({ nombre: req.body.contrato })
+            //console.log("EL CONTRATOOOOO",contrato)
+            let item = contrato[0].items.filter(items => items.descripcion_servicio === req.body.descripcion_servicio)[0]
+            console.log("Contrato",item)
             //En base a los subitems que vienen en el body, se busca la información completa
             //en el listado de items que sale del contrato y se arma el array de subitems
             let subitems = req.body.adicionales.map(
@@ -77,7 +97,7 @@ module.exports = {
                 cantidad: req.body.cantidad,
                 unidad_medida: item.unidad_medida,
                 valor_unitario: item.valor,
-                valor_total: item.valor * req.body.cantidad
+                valor_total: item.valor * req.body.cantidad ? item.valor * req.body.cantidad : 0
             }]
 
             subitems = subitems.map((subitem) => {
@@ -94,8 +114,7 @@ module.exports = {
                 tag: req.body.tag,
                 tag_detalle: req.body.tag_detalle,
                 informe_realizado: req.body.informe_realizado,
-                adicionales: req.body.adicionales,
-                inspector: req.body.usuario,
+                inspector: req.body.inspector,
                 unidad: req.body.unidad,
 
                 //Datos que salen del contrato
@@ -110,7 +129,7 @@ module.exports = {
                 detalles: req.body.detalles
             })
             const document = await parte.save().then()
-            console.log("EL DOCUMENTO", document)
+            console.log("Documento", document)
             res.status(201).json(document);
         } catch (e) {
             console.log(e)
@@ -163,8 +182,7 @@ module.exports = {
                 tag: req.body.tag,
                 tag_detalle: req.body.tag_detalle,
                 informe_realizado: req.body.informe_realizado,
-                adicionales: req.body.adicionales,
-                inspector: req.body.usuario,
+                inspector: req.body.inspector,
                 unidad: req.body.unidad,
 
                 //Datos que salen del contrato
