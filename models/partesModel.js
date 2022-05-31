@@ -40,7 +40,7 @@ const itemsSchema = mongoose.Schema({
     clase: { //gamagrafía o inspección
         type: String,
     },
-    cantidad:{
+    cantidad: {
         type: Number,
         default: 0
     },
@@ -78,7 +78,7 @@ const partesSchema = mongoose.Schema({
     tag_detalle: {
         type: String,
     },
-    unidad:{
+    unidad: {
         type: String
     },
 
@@ -94,28 +94,26 @@ const partesSchema = mongoose.Schema({
     area: { //Es RX, Inspección u Otro
         type: String,
     },
-    archivo: {
-        type: String,
-    },
+    items: [itemsSchema],
     fecha_carga: {
         type: Date,
         default: new Date()
     },
     fecha_inspeccion: {
         type: Date,
+        required: [true, errorMessage.GENERAL.campo_obligatorio]
     },
     observaciones: {
-        type: Number,
+        type: String,
     },
-    items: [itemsSchema],
+    
 
-    equipo_completo: {
+    trabajo_terminado: {
         type: Boolean,
         default: false
     },
     informe_realizado: {
         type: Boolean,
-        enum: [true, false],
         default: false
     },
     informe_fecha: {
@@ -123,7 +121,6 @@ const partesSchema = mongoose.Schema({
     },
     remito_realizado: {
         type: Boolean,
-        enum: [true, false],
         default: false
     },
     remito_numero: {
@@ -133,7 +130,7 @@ const partesSchema = mongoose.Schema({
     remito_fecha: {
         type: Date,
     },
-    certificado_fealizado: {
+    certificado_realizado: {
         type: Boolean,
         default: false
     },
@@ -154,7 +151,6 @@ const partesSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-
     valor_unitario: {
         type: Number,
     },

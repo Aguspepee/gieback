@@ -1,5 +1,6 @@
 const partesModel = require("../models/partesModel")
 const contractsModel = require("../models/contractsModel")
+const MtW = require("../util/monthNumToWord")
 var qs = require('qs');
 
 module.exports = {
@@ -19,34 +20,71 @@ module.exports = {
             page: req.query.page,
             limit: req.query.rowsPerPage,
         };
+
         const search = {
             "numero_reporte": req.query["numero_reporte"] || "",
             "tag": req.query["tag"] || "",
             "items.0.descripcion_servicio": req.query["items.0.descripcion_servicio"] || "",
-            "items.0.cantidad":req.query["items.0.cantidad"] || "",
+            "items.0.cantidad": req.query["items.0.cantidad"] || "",
             "inspector": req.query["inspector"] || "",
             "numero_orden": req.query["numero_orden"] || "",
             "cliente": req.query["cliente"] || "",
-            "contrato":req.query["contrato"] || "" ,
+            "contrato": req.query["contrato"] || "",
             "unidad": req.query["unidad"] || "",
-            "fecha_carga":req.query["fecha_carga"] || "" ,
+            "fecha_carga": req.query["fecha_carga"] || "",
             "semana_carga": req.query["semana_carga"] || "",
             "fecha_inspeccion": req.query["fecha_inspeccion"] || "",
-            "semana_inspeccion":req.query["semana_inspeccion"] || "" ,
-            "informe_realizado":req.query["informe_realizado"] || "",
-            "items.0.codigo_servicio":req.query["items.0.codigo_servicio"] || "" ,
+            "semana_inspeccion": req.query["semana_inspeccion"] || "",
+            "informe_realizado": req.query["informe_realizado"] || "",
+            "items.0.codigo_servicio": req.query["items.0.codigo_servicio"] || "",
             "archivo": req.query["archivo"] || "",
         }
-console.log(search)
-
+        console.log(search)
+        console.log("mes", MtW.monthNumToWord(11))
         var sort = {};
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
+                //Se extrae el campo tipo_actividad para poder concatenarlo
+                {
+                    $addFields: {
+                        tipo_actividad: {
+                            $first: {
+                                $map: {
+                                    input: "$items",
+                                    as: "r",
+                                    in: { $toString: "$$r.tipo_actividad" }
+                                }
+                            }
+                        }
+                    }
+                },
+                //Se crea el el campo mes_inspección_word para poder concatenarlo
+                {
+                    $addFields: {
+                        mes_inspeccion_word: {
+                            $let: {
+                                vars: {
+                                    monthsInString: ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
+                                },
+                                in: {
+                                    $arrayElemAt: ['$$monthsInString', { '$month': '$fecha_inspeccion' }]
+                                }
+                            }
+                        }
+                    }
+                },
+                //Se crea el el campo dia_inspección para poder concatenarlo
+                {
+                    $addFields: { dia_inspeccion: {'$toString':{ '$dayOfMonth': '$fecha_inspeccion' }} }
+                },
+
                 {
                     '$project': {
+                        'tipo_actividad': 1,
                         'numero_reporte': 1,
                         'numero_orden': 1,
+                        'descripcion_equipo': 1,
                         'inspector': 1,
                         'tag': 1,
                         'tag_detalle': 1,
@@ -55,19 +93,54 @@ console.log(search)
                         'área': 1,
                         'unidad': 1,
                         'fecha_carga': 1,
+                        'remito_realizado': 1,
+                        'remito_numero': 1,
+                        'remito_fecha': 1,
+                        'certificado_realizado': 1,
+                        'certificado_fecha': 1,
+                        'archivo': { $concat: ["$unidad", "_", "$numero_reporte", "_", "$tipo_actividad", "_", "$tag", "_", "$mes_inspeccion_word","$dia_inspeccion"] },
+                        'modificado': 1,
+                        'modificado_fecha': 1,
+                        'modificado_nombre': 1,
                         'semana_carga': {
-                            '$isoWeek': '$fecha_carga'
+                            $toString: { '$isoWeek': '$fecha_carga' }
                         },
                         'fecha_inspeccion': 1,
+                        'dia_inspeccion': 1,
                         'semana_inspeccion': {
-                            '$isoWeek': '$fecha_inspeccion'
+                            $toString: { '$isoWeek': '$fecha_inspeccion' }
+                        },
+                        'mes_inspeccion': {
+                            $toString: { '$month': '$fecha_inspeccion' }
+                        },
+                        'mes_inspeccion_word': 1,
+                        'año_inspeccion': {
+                            $toString: { '$year': '$fecha_inspeccion' }
                         },
                         'informe_realizado': 1,
                         'items.descripcion_servicio': 1,
                         'items.codigo_servicio': 1,
                         'items.clase': 1,
                         'items.cantidad': 1,
-                        'items.unidad_medida': 1
+                        'items.cantidad': 1,
+                        'items.unidad_medida': 1,
+                        'items.tipo_actividad': 1,
+
+                    }
+                },
+                // Se crea un nuevo campo con la cantidad del primer Ítem convertido a STR, para poder 
+                //realizar la comparación.
+                {
+                    $addFields: {
+                        'items_cantidad': {
+                            $first: {
+                                $map: {
+                                    input: "$items",
+                                    as: "r",
+                                    in: { $toString: "$$r.cantidad" }
+                                }
+                            }
+                        }
                     }
                 },
                 {
@@ -79,19 +152,19 @@ console.log(search)
                             { "numero_reporte": { $regex: search["numero_reporte"], $options: "i" } },
                             { "tag": { $regex: search["tag"], $options: "i" } },
                             { "items.0.descripcion_servicio": { $regex: search["items.0.descripcion_servicio"], $options: "i" } },
-                        /*     { "items.0.cantidad": { $regex: search["items.0.cantidad"], $options: "i" } }, */
-                           { "inspector": { $regex: search["inspector"], $options: "i" } },
+                            { "items_cantidad": { $regex: search["items.0.cantidad"], $options: "i" } },
+                            { "inspector": { $regex: search["inspector"], $options: "i" } },
                             { "numero_orden": { $regex: search["numero_orden"], $options: "i" } },
                             { "cliente": { $regex: search["cliente"], $options: "i" } },
                             { "contrato": { $regex: search["contrato"], $options: "i" } },
                             { "unidad": { $regex: search["unidad"], $options: "i" } },
-  /*                            { "fecha_carga": { $regex: search["fecha_carga"], $options: "i" } },*/
-                            /* { "semana_carga": { $regex: search["semana_carga"], $options: "i" } }, */
-                     /*        { "fecha_inspeccion": { $regex: search["fecha_inspeccion"], $options: "i" } }, */
-                           /*  { "semana_inspeccion": { $regex: search["semana_inspeccion"], $options: "i" } }, */
+                            /* { "fecha_carga": { $regex: search["fecha_carga"], $options: "i" } },*/
+                            { "semana_carga": { $regex: search["semana_carga"], $options: "i" } },
+                            /* { "fecha_inspeccion": { $regex: search["fecha_inspeccion"], $options: "i" } }, */
+                            { "semana_inspeccion": { $regex: search["semana_inspeccion"], $options: "i" } },
                             /* { "informe_realizado": { $regex: search["informe_realizado"], $options: "i" } }, */
-                             { "items.0.codigo_servicio": { $regex: search["items.0.codigo_servicio"], $options: "i" } }, 
-                            /* { "archivo": { $regex: search["archivo"], $options: "i" } },  */
+                            { "items.0.codigo_servicio": { $regex: search["items.0.codigo_servicio"], $options: "i" } },
+                            /* { "archivo": { $regex: search["archivo"], $options: "i" } },   */
                         ]
                     }
                 }
