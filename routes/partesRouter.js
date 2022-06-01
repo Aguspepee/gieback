@@ -13,6 +13,8 @@ router.post('/create', partesController.create);
 router.put('/edit/:id', partesController.edit);
 
 router.delete('/:id', partesController.delete);
+router.delete('/many/:selected', partesController.deleteMany);
+
 
 module.exports = router;
 

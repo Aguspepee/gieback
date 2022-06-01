@@ -327,8 +327,23 @@ module.exports = {
     },
 
     delete: async function (req, res, next) {
+        console.log("HOLAAAAAAAAAAAA")
         try {
             const documents = await partesModel.deleteOne({ _id: req.params.id })
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    deleteMany: async function (req, res, next) {
+        
+        const selected = req.params.selected.split(',')
+        console.log("HOLAAAAAAAAAAAA",selected)
+        try {
+            const documents = await partesModel.deleteMany({'_id':{'$in':selected}})
             res.json(documents)
         } catch (e) {
             console.log(e)
