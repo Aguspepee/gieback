@@ -15,11 +15,23 @@ module.exports = {
         }
     },
 
+    getOne: async function (req, res, next) {
+        try {
+            const documents = await partesModel.findById(req.params.id)
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     getRestricted: async function (req, res, next) {
         const options = {
             page: req.query.page,
             limit: req.query.rowsPerPage,
         };
+
 
         const search = {
             "numero_reporte": req.query["numero_reporte"] || "",
@@ -34,15 +46,17 @@ module.exports = {
             "fecha_carga": req.query["fecha_carga"] || "",
             "semana_carga": req.query["semana_carga"] || "",
             "fecha_inspeccion": req.query["fecha_inspeccion"] || "",
+            "AAMM_inspeccion": req.query["AAMM_inspeccion"] || "",
+            "AAsem_inspeccion": req.query["AAsem_inspeccion"] || "",
             "semana_inspeccion": req.query["semana_inspeccion"] || "",
             "informe_realizado": req.query["informe_realizado"] || "",
             "items.0.codigo_servicio": req.query["items.0.codigo_servicio"] || "",
             "archivo": req.query["archivo"] || "",
         }
         console.log(search)
-        console.log("mes", MtW.monthNumToWord(11))
         var sort = {};
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
+        console.log("SORT",sort)
         try {
             const documents = await partesModel.aggregate([
                 //Se extrae el campo tipo_actividad para poder concatenarlo
@@ -76,7 +90,7 @@ module.exports = {
                 },
                 //Se crea el el campo dia_inspección para poder concatenarlo
                 {
-                    $addFields: { dia_inspeccion: {'$toString':{ '$dayOfMonth': '$fecha_inspeccion' }} }
+                    $addFields: { dia_inspeccion: { '$toString': { '$dayOfMonth': '$fecha_inspeccion' } } }
                 },
 
                 {
@@ -98,7 +112,9 @@ module.exports = {
                         'remito_fecha': 1,
                         'certificado_realizado': 1,
                         'certificado_fecha': 1,
-                        'archivo': { $concat: ["$unidad", "_", "$numero_reporte", "_", "$tipo_actividad", "_", "$tag", "_", "$mes_inspeccion_word","$dia_inspeccion"] },
+                        'archivo': { 
+                            $concat: ["$unidad", "_", "$numero_reporte", "_", "$tipo_actividad", "_", "$tag", "_", "$mes_inspeccion_word", "$dia_inspeccion"] 
+                        },
                         'modificado': 1,
                         'modificado_fecha': 1,
                         'modificado_nombre': 1,
@@ -113,11 +129,44 @@ module.exports = {
                         'mes_inspeccion': {
                             $toString: { '$month': '$fecha_inspeccion' }
                         },
+                        'AAsem_inspeccion': {
+                            $concat:[
+                                {
+                                    $toString:{
+                                        $year:"$fecha_inspeccion"
+                                    }
+                                },
+                                "/",
+                                {
+                                    $toString:{
+                                        $isoWeek:"$fecha_inspeccion"
+                                    }
+                                }
+                            ]
+                        },
+                        'AAMM_inspeccion': {
+                            $concat:[
+                                {
+                                    $toString:{
+                                        $year:"$fecha_inspeccion"
+                                    }
+                                },
+                                "/",
+                                {
+                                    $toString:{
+                                        $month:"$fecha_inspeccion"
+                                    }
+                                }
+                            ]
+                        },
                         'mes_inspeccion_word': 1,
                         'año_inspeccion': {
                             $toString: { '$year': '$fecha_inspeccion' }
                         },
                         'informe_realizado': 1,
+                        'informe_realizado_fecha':1,
+                        'informe_revisado': 1,
+                        'informe_revisado_fecha':1,
                         'items.descripcion_servicio': 1,
                         'items.codigo_servicio': 1,
                         'items.clase': 1,
@@ -144,9 +193,6 @@ module.exports = {
                     }
                 },
                 {
-                    "$sort": sort
-                },
-                {
                     '$match': {
                         $and: [
                             { "numero_reporte": { $regex: search["numero_reporte"], $options: "i" } },
@@ -161,13 +207,18 @@ module.exports = {
                             /* { "fecha_carga": { $regex: search["fecha_carga"], $options: "i" } },*/
                             { "semana_carga": { $regex: search["semana_carga"], $options: "i" } },
                             /* { "fecha_inspeccion": { $regex: search["fecha_inspeccion"], $options: "i" } }, */
+                            { "AAMM_inspeccion": { $regex: search["AAMM_inspeccion"], $options: "i" } }, 
+                            { "AAsem_inspeccion": { $regex: search["AAsem_inspeccion"], $options: "i" } }, 
                             { "semana_inspeccion": { $regex: search["semana_inspeccion"], $options: "i" } },
                             /* { "informe_realizado": { $regex: search["informe_realizado"], $options: "i" } }, */
                             { "items.0.codigo_servicio": { $regex: search["items.0.codigo_servicio"], $options: "i" } },
                             /* { "archivo": { $regex: search["archivo"], $options: "i" } },   */
                         ]
                     }
-                }
+                },
+                {
+                    "$sort": sort
+                },
             ]).paginateExec(options)
             res.json(documents)
         } catch (e) {
@@ -189,42 +240,28 @@ module.exports = {
     },
 
     create: async function (req, res, next) {
-
         try {
-
             //Se busca el contrato en la colección de contratos
-
             const contrato = await contractsModel.find({ nombre: req.body.contrato })
-            //console.log("EL CONTRATOOOOO",contrato)
-            let item = contrato[0].items.filter(items => items.descripcion_servicio === req.body.descripcion_servicio)[0]
-            console.log("Contrato", item)
-            //En base a los subitems que vienen en el body, se busca la información completa
-            //en el listado de items que sale del contrato y se arma el array de subitems
-            let subitems = req.body.adicionales.map(
-                //(dato) => contrato[0].items.filter(items => items.descripcion_servicio === dato.descripcion_servicio)[0]
-                (dato) => {
-                    let prueba = contrato[0].items.filter(items => items.descripcion_servicio === dato.descripcion_servicio)[0]
-                    prueba.cantidad = dato.cantidad
-                    return (prueba)
-                }
-            )
-            let items = [{
-                descripcion_servicio: item.descripcion_servicio,
-                codigo_servicio: item.codigo_servicio,
-                tipo_actividad: item.tipo_actividad,
-                clase: item.clase,
-                cantidad: req.body.cantidad,
-                unidad_medida: item.unidad_medida,
-                valor_unitario: item.valor,
-                valor_total: item.valor * req.body.cantidad ? item.valor * req.body.cantidad : 0
-            }]
-
-            subitems = subitems.map((subitem) => {
-                let valor = subitem.unidad_medida === "Porcentaje adicional" ? item.valor * req.body.cantidad * subitem.valor * 1 / 100 : subitem.valor * 1
-                //let valor = subitem.tipo_actividad === "Adicional"? 9999999999 : 1111111111111
-                return ({ ...subitem, valor_total: valor })
+            let items = req.body.items.map((item) => {
+                let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
+                item_contrato.cantidad = item.cantidad
+                return (item_contrato)
             })
-            subitems.map((subitems) => items.push(subitems))
+            //Se asignan los valores al los items
+            items[0].valor_unitario = items[0].valor
+            items[0].valor_total = items[0].valor * items[0].cantidad
+            for (let i = 1; i < items.length; i++) {
+                //Si es porcentaje adicional calcula el porcentaje
+                if (items[i].unidad_medida === "Porcentaje adicional") {
+                    items[i].valor_unitario = items[0].valor * items[0].cantidad * items[i].valor * 1 / 100;
+                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                    //Si no es porcentaje adicional lo calcula como un item común
+                } else {
+                    items[i].valor_unitario = items[i].valor
+                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                }
+            }
 
             const parte = new partesModel({
                 //Datos que vienen de la req
@@ -236,15 +273,12 @@ module.exports = {
                 inspector: req.body.inspector,
                 unidad: req.body.unidad,
                 fecha_inspeccion: req.body.fecha_inspeccion,
-
                 //Datos que salen del contrato
                 contrato: contrato[0].nombre,
                 cliente: contrato[0].cliente,
                 area: contrato[0].area,
-
                 //Datos que salen del item del contrato
                 items: items,
-
                 //Detalles (por lo general de RX)
                 detalles: req.body.detalles
             })
@@ -261,41 +295,33 @@ module.exports = {
     edit: async function (req, res, next) {
         console.log(req.params.id)
         try {
-            //Se busca el contrato en la colección de contratos
-            const contrato = await contractsModel.find({ nombre: req.body.contrato })
-            // let items = contrato[0].items
-
-            let item = contrato[0]?.items.filter(items => items.descripcion_servicio === req.body.descripcion_servicio)[0]
-
-            //En base a los subitems que vienen en el body, se busca la información completa
-            //en el listado de items que sale del contrato y se arma el array de subitems
-            let subitems = req.body.adicionales?.map(
-                //(dato) => contrato[0].items.filter(items => items.descripcion_servicio === dato.descripcion_servicio)[0]
-                (dato) => {
-                    let prueba = contrato[0].items.filter(items => items.descripcion_servicio === dato.descripcion_servicio)[0]
-                    prueba.cantidad = dato.cantidad
-                    return (prueba)
+            let contrato
+            let items
+            if (req.body.contrato) {
+                //Se busca el contrato en la colección de contratos
+                contrato = await contractsModel.find({ nombre: req.body.contrato })
+                items = req.body.items.map((item) => {
+                    let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
+                    item_contrato.cantidad = item.cantidad
+                    return (item_contrato)
+                })
+                //Se asignan los valores al los items
+                items[0].valor_unitario = items[0].valor
+                items[0].valor_total = items[0].valor * items[0].cantidad
+                for (let i = 1; i < items.length; i++) {
+                    //Si es porcentaje adicional calcula el porcentaje
+                    if (items[i].unidad_medida === "Porcentaje adicional") {
+                        items[i].valor_unitario = items[0].valor * items[0].cantidad * items[i].valor * 1 / 100;
+                        items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                        //Si no es porcentaje adicional lo calcula como un item común
+                    } else {
+                        items[i].valor_unitario = items[i].valor
+                        items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                    }
                 }
-            )
-            let items = [{
-                descripcion_servicio: item?.descripcion_servicio,
-                codigo_servicio: item?.codigo_servicio,
-                tipo_actividad: item?.tipo_actividad,
-                clase: item?.clase,
-                cantidad: req.body.cantidad,
-                unidad_medida: item?.unidad_medida,
-                valor_unitario: item?.valor,
-                valor_total: item?.valor * req.body.cantidad ? item?.valor * req.body.cantidad : 0
-            }]
+            }
 
-            subitems = subitems?.map((subitem) => {
-                let valor = subitem.unidad_medida === "Porcentaje adicional" ? item.valor * req.body.cantidad * subitem.valor * 1 / 100 : subitem.valor * 1
-                //let valor = subitem.tipo_actividad === "Adicional"? 9999999999 : 1111111111111
-                return ({ ...subitem, valor_total: valor })
-            })
-            subitems?.map((subitems) => items.push(subitems))
-
-            const parte = {
+            const parte ={
                 //Datos que vienen de la req
                 numero_reporte: req.body.numero_reporte,
                 numero_orden: req.body.numero_orden,
@@ -304,15 +330,13 @@ module.exports = {
                 informe_realizado: req.body.informe_realizado,
                 inspector: req.body.inspector,
                 unidad: req.body.unidad,
-
+                fecha_inspeccion: req.body.fecha_inspeccion,
                 //Datos que salen del contrato
-                contrato: contrato[0].nombre,
-                cliente: contrato[0].cliente,
-                area: contrato[0].area,
-
+                contrato: contrato ? contrato[0]?.nombre : undefined,
+                cliente: contrato ? contrato[0]?.cliente : undefined,
+                area: contrato ? contrato[0]?.area : undefined,
                 //Datos que salen del item del contrato
-                items: items,
-
+                items: items || undefined,
                 //Detalles (por lo general de RX)
                 detalles: req.body.detalles
             }
@@ -339,11 +363,11 @@ module.exports = {
     },
 
     deleteMany: async function (req, res, next) {
-        
+
         const selected = req.params.selected.split(',')
-        console.log("HOLAAAAAAAAAAAA",selected)
+        console.log("HOLAAAAAAAAAAAA", selected)
         try {
-            const documents = await partesModel.deleteMany({'_id':{'$in':selected}})
+            const documents = await partesModel.deleteMany({ '_id': { '$in': selected } })
             res.json(documents)
         } catch (e) {
             console.log(e)

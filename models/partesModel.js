@@ -106,8 +106,6 @@ const partesSchema = mongoose.Schema({
     observaciones: {
         type: String,
     },
-    
-
     trabajo_terminado: {
         type: Boolean,
         default: false
@@ -116,7 +114,14 @@ const partesSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    informe_fecha: {
+    informe_realizado_fecha: {
+        type: Date,
+    },
+    informe_revisado: {
+        type: Boolean,
+        default: false
+    },
+    informe_revisado_fecha: {
         type: Date,
     },
     remito_realizado: {
@@ -125,7 +130,6 @@ const partesSchema = mongoose.Schema({
     },
     remito_numero: {
         type: Number,
-        default: 0
     },
     remito_fecha: {
         type: Date,

@@ -6,10 +6,6 @@ const unidadesSchema = mongoose.Schema({
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
-    abreviatura: {
-        type: String,
-        required: [true, errorMessage.GENERAL.campo_obligatorio],
-    },
 })
 
 const certificantesSchema = mongoose.Schema({

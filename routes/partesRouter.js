@@ -5,6 +5,7 @@ const partesController = require("../controllers/partesController.js")
 
 /* GET partes listing. */
 router.get('/', partesController.getAll);
+router.get('/one/:id', partesController.getOne)
 router.get('/restricted', partesController.getRestricted);
 router.get('/unrestricted', partesController.getUnrestricted);
 
