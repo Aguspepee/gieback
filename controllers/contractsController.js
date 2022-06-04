@@ -51,7 +51,6 @@ module.exports = {
         }
     },
 
-
     getItems: async function (req, res, next) {
         try {
             const documents = await contractsModel.find({}, { nombre: 1, cliente: 1, fecha_inicio: 1, area: 1, activo: 1 })
@@ -62,9 +61,6 @@ module.exports = {
             next(e)
         }
     },
-
-
-
 
     getOne: async function (req, res, next) {
         try {

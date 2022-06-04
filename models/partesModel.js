@@ -110,12 +110,17 @@ const partesSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    trabajo_terminado_fecha: {
+        type: Date,
+        default: null
+    },
     informe_realizado: {
         type: Boolean,
         default: false
     },
     informe_realizado_fecha: {
         type: Date,
+        default: null
     },
     informe_revisado: {
         type: Boolean,
@@ -123,6 +128,7 @@ const partesSchema = mongoose.Schema({
     },
     informe_revisado_fecha: {
         type: Date,
+        default:null
     },
     remito_realizado: {
         type: Boolean,
@@ -133,6 +139,7 @@ const partesSchema = mongoose.Schema({
     },
     remito_fecha: {
         type: Date,
+        default:null
     },
     certificado_realizado: {
         type: Boolean,
@@ -140,6 +147,7 @@ const partesSchema = mongoose.Schema({
     },
     certificado_fecha: {
         type: Date,
+        default: null
     },
     modificado: {
         type: Boolean,
@@ -147,6 +155,7 @@ const partesSchema = mongoose.Schema({
     },
     modificado_fecha: {
         type: Date,
+        default:null
     },
     modificado_nombre: {
         type: String,
