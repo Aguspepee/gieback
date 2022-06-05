@@ -2,7 +2,46 @@ const mongoose = require("../bin/mongodb")
 const errorMessage = require("../util/errorMessage")
 const bcrypt = require("bcrypt")
 
-//creación schema
+//Subshema donde se definen las columnas del Parte Diario
+const parteColumnsShema = mongoose.Schema({
+    id: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
+    numeric: {
+        type: Boolean,
+        enum: [true, false],
+        default: false
+    },
+    disablePadding: {
+        type: Boolean,
+        enum: [true, false],
+        default: true
+    },
+    label: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
+    width: {
+        type: Number,
+        default: 200
+    },
+    show: {
+        type: Boolean,
+        enum: [true, false],
+        default: true
+    },
+    placeHolder: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
+    type: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
+})
+
+//USERS schema
 const usersShema = mongoose.Schema({
     nombre: {
         type: String,
@@ -19,19 +58,18 @@ const usersShema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         unique: true
     },
-    role: { 
+    role: {
         type: String,
         default: "Inspector",
         enum: ["Administrador", "Supervisor", "Inspector", "Asistente"],
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
-    area: { 
+    area: {
         type: String,
         default: "Inspección",
         //enum: ["Inspección", "Radiografía"],
         //required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
-
     password: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
@@ -52,7 +90,8 @@ const usersShema = mongoose.Schema({
         enum: [true, false],
         default: false
     },
-    image: { 
+    parteColumns: [parteColumnsShema],
+    image: {
         type: String,
     },
 })

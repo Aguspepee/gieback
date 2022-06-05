@@ -137,7 +137,7 @@ const partesSchema = mongoose.Schema({
     remito_numero: {
         type: Number,
     },
-    remito_fecha: {
+    remito_realizado_fecha: {
         type: Date,
         default:null
     },
@@ -145,7 +145,7 @@ const partesSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    certificado_fecha: {
+    certificado_realizado_fecha: {
         type: Date,
         default: null
     },

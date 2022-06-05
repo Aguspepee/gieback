@@ -2,6 +2,7 @@ const usersModel = require("../models/usersModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CONFIG = require("../config/config");
+const parteColumns = require("../util/parteColumns");
 //const multer = require('multer');
 //const upload =multer({dest: 'uploads/'});
 
@@ -81,6 +82,7 @@ module.exports = {
                 active: req.body.active,
                 deleted: req.body.deleted,
                 policy: req.body.policy,
+                parteColumns: parteColumns.parteColumns,
                 //image: req.file.path
             })
             const document = await user.save()
@@ -133,7 +135,8 @@ module.exports = {
                 role: req.body.role,
                 active: req.body.active,
                 deleted: req.body.deleted,
-                policy: req.body.policy
+                policy: req.body.policy,
+                parteColumns: req.body.parteColumns,
             }
             const document = await usersModel.findByIdAndUpdate(req.params.id, contract, { new: true })
             console.log("se actualizó", document)

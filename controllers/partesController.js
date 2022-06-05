@@ -168,14 +168,16 @@ module.exports = {
                         'año_inspeccion': {
                             $toString: { '$year': '$fecha_inspeccion' }
                         },
-                        'trabajo_terminado':1,
-                        'trabajo_terminado_fecha':1,
+                        'trabajo_terminado': 1,
+                        'trabajo_terminado_fecha': 1,
                         'informe_realizado': 1,
                         'informe_realizado_fecha': 1,
                         'informe_revisado': 1,
                         'informe_revisado_fecha': 1,
-                        'remito_realizado':1,
-                        'certificado_realizado':1,
+                        'remito_realizado': 1,
+                        'remito_realizado_fecha': 1,
+                        'certificado_realizado': 1,
+                        'certificado_realizado_fecha': 1,
                         'items.descripcion_servicio': 1,
                         'items.codigo_servicio': 1,
                         'items.clase': 1,
@@ -221,9 +223,9 @@ module.exports = {
                             { "semana_inspeccion": { $regex: search["semana_inspeccion"], $options: "i" } },
 
                             //Campos Booleanos
-                             { "trabajo_terminado": { $in: search["trabajo_terminado"] } }, 
+                            { "trabajo_terminado": { $in: search["trabajo_terminado"] } },
                             { "informe_realizado": { $in: search["informe_realizado"] } },
-                             { "informe_revisado": { $in: search["informe_revisado"] } },
+                            { "informe_revisado": { $in: search["informe_revisado"] } },
                             { "remito_realizado": { $in: search["remito_realizado"] } },
                             { "certificado_realizado": { $in: search["certificado_realizado"] } },
 
@@ -350,15 +352,15 @@ module.exports = {
 
                 //Pares BOOLEANO-FECHA
                 trabajo_terminado: req.body.trabajo_terminado,
-                trabajo_terminado_fecha: req.body.trabajo_terminado? Date() : null,
+                trabajo_terminado_fecha: req.body.trabajo_terminado ? Date() : (req.body.trabajo_terminado === false ? null : undefined),
                 informe_realizado: req.body.informe_realizado,
-                informe_realizado_fecha: req.body.informe_realizado ? Date() : null,
+                informe_realizado_fecha: req.body.informe_realizado ? Date() : (req.body.informe_realizado === false ? null : undefined),
                 informe_revisado: req.body.informe_revisado,
-                informe_revisado_fecha: req.body.informe_revisado ? Date() : null,
+                informe_revisado_fecha: req.body.informe_revisado ? Date() : (req.body.informe_revisado === false ? null : undefined),
                 remito_realizado: req.body.remito_realizado,
-                remito_realizado_fecha: req.body.remito_realizado ? Date() : null,
+                remito_realizado_fecha: req.body.remito_realizado ? Date() : (req.body.remito_realizado === false ? null : undefined),
                 certificado_realizado: req.body.certificado_realizado,
-                certificado_realizado_fecha: req.body.certificado_realizado ? Date() : null,
+                certificado_realizado_fecha: req.body.certificado_realizado ? Date() : (req.body.certificado_realizado === false ? null : undefined),
 
                 //Datos que salen del contrato
                 contrato: contrato ? contrato[0]?.nombre : undefined,
@@ -392,7 +394,6 @@ module.exports = {
     },
 
     deleteMany: async function (req, res, next) {
-
         const selected = req.params.selected.split(',')
         console.log("HOLAAAAAAAAAAAA", selected)
         try {
