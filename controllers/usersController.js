@@ -20,18 +20,7 @@ module.exports = {
 
     getNames: async function (req, res, next) {
         try {
-            const documents = await usersModel.find({}, { nombre: 1 })
-            res.json(documents)
-        } catch (e) {
-            console.log(e)
-            e.status = 400
-            next(e)
-        }
-    },
-
-    getList: async function (req, res, next) {
-        try {
-            const documents = await usersModel.find({}, { nombre: 1, cliente: 1, fecha_inicio: 1, tipo: 1, activo: 1 })
+            const documents = await usersModel.find({}, { nombre: 1, apellido: 1 })
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -67,7 +56,7 @@ module.exports = {
             console.log(e)
             e.status = 400
             next(e)
-        }
+        } 
     },
 
     register: async function (req, res, next) {

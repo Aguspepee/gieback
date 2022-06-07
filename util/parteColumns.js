@@ -263,7 +263,7 @@ module.exports={
             type: "number",
         },
         {
-            id: 'remito_fecha',
+            id: 'remito_realizado_fecha',
             numeric: false,
             disablePadding: false,
             label: 'Fecha Remito',

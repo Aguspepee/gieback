@@ -3,6 +3,7 @@ const contractsModel = require("../models/contractsModel")
 const bTA = require("../util/booleanToArray")
 var qs = require('qs');
 
+
 module.exports = {
     getAll: async function (req, res, next) {
         try {
@@ -27,6 +28,10 @@ module.exports = {
     },
 
     getRestricted: async function (req, res, next) {
+        partesModel.collection.getIndexes({full: true}).then(indexes => {
+            console.log("indexes:", indexes);
+            // ...
+        }).catch(console.error);
         const options = {
             page: req.query.page,
             limit: req.query.rowsPerPage,
@@ -35,6 +40,9 @@ module.exports = {
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
+/*                 {'$match':{remito_realizado:true}
+                }, */
+                 
                 {
                     $addFields: {
                         semana_carga: { $toString: { '$isoWeek': '$fecha_carga' } },
@@ -85,12 +93,22 @@ module.exports = {
                             { "informe_revisado": { $in: bTA.booleanToArray(req.query["informe_revisado"]) || [true, false] } },
                             { "remito_realizado": { $in: bTA.booleanToArray(req.query["remito_realizado"]) || [true, false] } },
                             { "certificado_realizado": { $in: bTA.booleanToArray(req.query["certificado_realizado"]) || [true, false] } },
+                            //{ "operador.nombre": { $regex: "Car", $options: "i" }}
                         ]
                     }
                 },
                 {
                     "$sort": sort
                 },
+                {
+                    $lookup:
+                      {
+                        from: "users",
+                        localField: "operador",
+                        foreignField: "_id",
+                        as: "operador"
+                      }
+                 }, 
             ]).paginateExec(options)
             res.json(documents)
         } catch (e) {
@@ -143,9 +161,13 @@ module.exports = {
                 tag: req.body.tag,
                 tag_detalle: req.body.tag_detalle,
                 informe_realizado: req.body.informe_realizado,
+                operador: req.body.operador,
                 inspector: req.body.inspector,
                 unidad: req.body.unidad,
                 fecha_inspeccion: req.body.fecha_inspeccion,
+                remito_realizado: req.body.remito_realizado,
+                remito_realizado_fecha: req.body.remito_realizado_fecha,
+                remito_numero: req.body.remito_numero,
                 //Datos que salen del contrato
                 contrato: contrato[0].nombre,
                 cliente: contrato[0].cliente,
@@ -200,6 +222,7 @@ module.exports = {
                 numero_orden: req.body.numero_orden,
                 tag: req.body.tag,
                 tag_detalle: req.body.tag_detalle,
+                operador: req.body.operador,
                 inspector: req.body.inspector,
                 unidad: req.body.unidad,
                 fecha_inspeccion: req.body.fecha_inspeccion,

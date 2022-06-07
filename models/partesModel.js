@@ -1,6 +1,18 @@
 const mongoose = require("../bin/mongodb")
 const errorMessage = require("../util/errorMessage")
 var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
+const { isObjectIdOrHexString } = require("mongoose");
+
+
+var CounterPartesSchema = mongoose.Schema(
+    {
+        _id: { type: String, required: true },
+        sequence_value: { type: Number, default: 1 }
+    }
+);
+var CounterPartes = mongoose.model('CounterPartes', CounterPartesSchema);
+
+
 
 //Se declaran los subSchema
 //Este schema contiene todos los datos extra de las actividades de RX 
@@ -30,6 +42,7 @@ const detallesSchema = mongoose.Schema({
 const itemsSchema = mongoose.Schema({
     descripcion_servicio: {
         type: String,
+        //index: true
     },
     codigo_servicio: {
         type: String,
@@ -68,6 +81,10 @@ const partesSchema = mongoose.Schema({
     },
     numero_orden: {
         type: String,
+    },
+    operador:{
+      type: mongoose.Schema.ObjectId,
+      ref: "users"  
     },
     inspector: {
         type: String,
@@ -132,7 +149,8 @@ const partesSchema = mongoose.Schema({
     },
     remito_realizado: {
         type: Boolean,
-        default: false
+        default: false,
+        index: true
     },
     remito_numero: {
         type: Number,
@@ -171,7 +189,24 @@ const partesSchema = mongoose.Schema({
         type: Number,
     },
     detalles: detallesSchema,
+    Id: {type: String, require: true},
 })
+
+partesSchema.pre('save', function(next){
+    var doc = this;
+    CounterPartes.findByIdAndUpdate(
+        'productId' ,
+        { $inc : { sequence_value : 1 } }, 
+        { new: true, upsert: true },
+         function(err, seq){
+            if(err) return next(err);
+            doc.Id = seq.sequence_value;
+            next();
+        } 
+    );
+ }
+);
+
 
 partesSchema.plugin(aggregatePaginate);
 //creación model
