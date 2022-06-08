@@ -2,6 +2,7 @@ const contractsModel = require("../models/contractsModel")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const CONFIG = require("../config/config")
+var ObjectId = require('mongodb').ObjectID;
 
 module.exports = {
     getAll: async function (req, res, next) {
@@ -28,9 +29,40 @@ module.exports = {
         }
     },
 
+   
+
     getList: async function (req, res, next) {
         try {
-            const documents = await contractsModel.find({}, {
+            const documents = await contractsModel.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "cliente",
+                        foreignField: "_id",
+                        as: "cliente"
+                    }
+                },
+                {$project:{
+                    nombre: 1,
+                    cliente: "$cliente.nombre",
+                    fecha_inicio: 1,
+                    area: 1,
+                    activo: 1,
+                    campos: 1,
+                    unidades: 1,
+                    certificantes: 1,
+                    "items.descripcion_servicio": 1,
+                    "items.clase": 1,
+                    "items.unidad_medida":1
+
+                }
+
+                }
+                
+                
+                
+                /* {
                 nombre: 1,
                 cliente: 1,
                 fecha_inicio: 1,
@@ -42,7 +74,7 @@ module.exports = {
                 "items.descripcion_servicio": 1,
                 "items.clase": 1,
                 "items.unidad_medida":1
-            })
+            } */])
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -63,8 +95,24 @@ module.exports = {
     },
 
     getOne: async function (req, res, next) {
+        console.log("esta",req.params.id)
         try {
-            const documents = await contractsModel.findById(req.params.id)
+            const documents = await contractsModel.aggregate([
+                {
+                  $match: {
+                    _id: ObjectId(req.params.id),
+                  },
+                },
+                {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "cliente",
+                        foreignField: "_id",
+                        as: "cliente"
+                    }
+                }
+              ]);
             res.json(documents)
         } catch (e) {
             console.log(e)

@@ -1,7 +1,6 @@
 const mongoose = require("../bin/mongodb")
 const errorMessage = require("../util/errorMessage")
 var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
-const { isObjectIdOrHexString } = require("mongoose");
 
 
 var CounterPartesSchema = mongoose.Schema(
@@ -82,9 +81,9 @@ const partesSchema = mongoose.Schema({
     numero_orden: {
         type: String,
     },
-    operador:{
-      type: mongoose.Schema.ObjectId,
-      ref: "users"  
+    operador: {
+        type: mongoose.Schema.ObjectId,
+        ref: "users"
     },
     inspector: {
         type: String,
@@ -101,16 +100,16 @@ const partesSchema = mongoose.Schema({
 
     //DATOS QUE SALEN DEL CONTRATO
     contrato: {
+        type: mongoose.Schema.ObjectId,
+        ref: "contracts"
+    },
+/*     cliente: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-    },
-    cliente: {
+    }, */
+/*     area: { //Es RX, Inspección u Otro
         type: String,
-        required: [true, errorMessage.GENERAL.campo_obligatorio],
-    },
-    area: { //Es RX, Inspección u Otro
-        type: String,
-    },
+    }, */
     items: [itemsSchema],
     fecha_carga: {
         type: Date,
@@ -145,7 +144,7 @@ const partesSchema = mongoose.Schema({
     },
     informe_revisado_fecha: {
         type: Date,
-        default:null
+        default: null
     },
     remito_realizado: {
         type: Boolean,
@@ -157,7 +156,7 @@ const partesSchema = mongoose.Schema({
     },
     remito_realizado_fecha: {
         type: Date,
-        default:null
+        default: null
     },
     certificado_realizado: {
         type: Boolean,
@@ -173,7 +172,7 @@ const partesSchema = mongoose.Schema({
     },
     modificado_fecha: {
         type: Date,
-        default:null
+        default: null
     },
     modificado_nombre: {
         type: String,
@@ -189,22 +188,22 @@ const partesSchema = mongoose.Schema({
         type: Number,
     },
     detalles: detallesSchema,
-    Id: {type: String, require: true},
+    Id: { type: String, require: true },
 })
 
-partesSchema.pre('save', function(next){
+partesSchema.pre('save', function (next) {
     var doc = this;
     CounterPartes.findByIdAndUpdate(
-        'productId' ,
-        { $inc : { sequence_value : 1 } }, 
+        'productId',
+        { $inc: { sequence_value: 1 } },
         { new: true, upsert: true },
-         function(err, seq){
-            if(err) return next(err);
+        function (err, seq) {
+            if (err) return next(err);
             doc.Id = seq.sequence_value;
             next();
-        } 
+        }
     );
- }
+}
 );
 
 

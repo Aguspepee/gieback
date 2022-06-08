@@ -115,8 +115,8 @@ const contractsShema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     cliente: {
-        type: String,
-        required: [true, errorMessage.GENERAL.campo_obligatorio],
+        type: mongoose.Schema.ObjectId,
+        ref: "clients"
     },
     fecha_inicio: {
         type: Date,

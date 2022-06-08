@@ -1,6 +1,16 @@
 module.exports={
     parteColumns: [
         {
+            id: 'Id',
+            numeric: false,
+            disablePadding: true,
+            label: 'Id',
+            width: 50,
+            show: true,
+            placeHolder: "#",
+            type: "number", //text, number, date, select, none
+        },
+        {
             id: 'numero_reporte',
             numeric: false,
             disablePadding: true,

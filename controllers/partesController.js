@@ -28,8 +28,8 @@ module.exports = {
     },
 
     getRestricted: async function (req, res, next) {
-        partesModel.collection.getIndexes({full: true}).then(indexes => {
-            console.log("indexes:", indexes);
+        partesModel.collection.getIndexes({ full: true }).then(indexes => {
+            //console.log("indexes:", indexes);
             // ...
         }).catch(console.error);
         const options = {
@@ -40,9 +40,10 @@ module.exports = {
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
-/*                 {'$match':{remito_realizado:true}
-                }, */
-                 
+/*                 {
+                    '$match': { remito_realizado: true }
+                },  */
+
                 {
                     $addFields: {
                         semana_carga: { $toString: { '$isoWeek': '$fecha_carga' } },
@@ -76,8 +77,8 @@ module.exports = {
                             { "items_cantidad": { $regex: req.query["items.0.cantidad"] || "", $options: "i" } },
                             { "inspector": { $regex: req.query["inspector"] || "", $options: "i" } },
                             { "numero_orden": { $regex: req.query["numero_orden"] || "", $options: "i" } },
-                            { "cliente": { $regex: req.query["cliente"] || "", $options: "i" } },
-                            { "contrato": { $regex: req.query["contrato"] || "", $options: "i" } },
+                            /*  { "cliente": { $regex: req.query["cliente"] || "", $options: "i" } },
+                             { "contrato": { $regex: req.query["contrato"] || "", $options: "i" } }, */
                             { "unidad": { $regex: req.query["unidad"] || "", $options: "i" } },
                             /* { "fecha_carga": { $regex: req.query["fecha_carga"] || "", $options: "i" } },*/
                             { "semana_carga": { $regex: req.query["semana_carga"] || "", $options: "i" } },
@@ -102,13 +103,40 @@ module.exports = {
                 },
                 {
                     $lookup:
-                      {
+                    {
                         from: "users",
                         localField: "operador",
                         foreignField: "_id",
                         as: "operador"
-                      }
-                 }, 
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "contracts",
+                        localField: "contrato",
+                        foreignField: "_id",
+                        as: "contrato"
+                    }
+                },
+                { $unset: ['contrato.items','contrato.unidades','contrato.certificantes','contrato.campos','contrato.descripcion_servicio'] },
+                {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "contrato.cliente",
+                        foreignField: "_id",
+                        as: "cliente"
+                    }
+                },
+/*                 {
+                    '$match': {
+                        $and: [
+                             { "cliente.0.nombre": { $regex: req.query["cliente"] || "", $options: "i" } },
+                             { "contrato.0.nombre": { $regex: req.query["contrato"] || "", $options: "i" } },
+                        ]
+                    }
+                }, */
             ]).paginateExec(options)
             res.json(documents)
         } catch (e) {
@@ -132,8 +160,8 @@ module.exports = {
     create: async function (req, res, next) {
         try {
             //Se busca el contrato en la colección de contratos
-            console.log(req.body.contrato)
-            const contrato = await contractsModel.find({ nombre: req.body.contrato })
+            console.log("Contrato", req.body.contrato)
+            const contrato = await contractsModel.find({ _id: req.body.contrato })
             let items = req.body.items.map((item) => {
                 let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
                 item_contrato.cantidad = item.cantidad
@@ -169,9 +197,9 @@ module.exports = {
                 remito_realizado_fecha: req.body.remito_realizado_fecha,
                 remito_numero: req.body.remito_numero,
                 //Datos que salen del contrato
-                contrato: contrato[0].nombre,
-                cliente: contrato[0].cliente,
-                area: contrato[0].area,
+                contrato: req.body.contrato._id,
+                //cliente: contrato[0].cliente,
+                //area: contrato[0].area,
                 //Datos que salen del item del contrato
                 items: items,
                 //Detalles (por lo general de RX)
