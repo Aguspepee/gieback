@@ -71,8 +71,9 @@ const itemsSchema = mongoose.Schema({
 
 //creación schema
 const partesSchema = mongoose.Schema({
-    id: {
+    Id: {
         type: Number,
+        require: true 
     },
     //DATOS QUE VIENEN EN LA REQ
     numero_reporte: {
@@ -188,7 +189,6 @@ const partesSchema = mongoose.Schema({
         type: Number,
     },
     detalles: detallesSchema,
-    Id: { type: String, require: true },
 })
 
 partesSchema.pre('save', function (next) {

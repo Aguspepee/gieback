@@ -31,6 +31,7 @@ module.exports = {
         partesModel.collection.getIndexes({ full: true }).then(indexes => {
             //console.log("indexes:", indexes);
             // ...
+            console.log(req.query)
         }).catch(console.error);
         const options = {
             page: req.query.page,
@@ -40,9 +41,9 @@ module.exports = {
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
-/*                 {
-                    '$match': { remito_realizado: true }
-                },  */
+                /*                 {
+                                    '$match': { remito_realizado: true }
+                                },  */
 
                 {
                     $addFields: {
@@ -94,7 +95,7 @@ module.exports = {
                             { "informe_revisado": { $in: bTA.booleanToArray(req.query["informe_revisado"]) || [true, false] } },
                             { "remito_realizado": { $in: bTA.booleanToArray(req.query["remito_realizado"]) || [true, false] } },
                             { "certificado_realizado": { $in: bTA.booleanToArray(req.query["certificado_realizado"]) || [true, false] } },
-                            //{ "operador.nombre": { $regex: "Car", $options: "i" }}
+
                         ]
                     }
                 },
@@ -119,7 +120,7 @@ module.exports = {
                         as: "contrato"
                     }
                 },
-                { $unset: ['contrato.items','contrato.unidades','contrato.certificantes','contrato.campos','contrato.descripcion_servicio'] },
+                { $unset: ['contrato.items', 'contrato.unidades', 'contrato.certificantes', 'contrato.campos', 'contrato.descripcion_servicio'] },
                 {
                     $lookup:
                     {
@@ -129,14 +130,26 @@ module.exports = {
                         as: "cliente"
                     }
                 },
-/*                 {
+                {
+                    $addFields: {
+                        "operador.nombre_completo": {
+                            "$map": {
+                                "input": "$operador",
+                                "as": "o",
+                                "in": { "$concat": ["$$o.apellido", ", ", "$$o.nombre"] },
+                            }
+                        }
+                    }
+                },
+                {
                     '$match': {
                         $and: [
-                             { "cliente.0.nombre": { $regex: req.query["cliente"] || "", $options: "i" } },
-                             { "contrato.0.nombre": { $regex: req.query["contrato"] || "", $options: "i" } },
+                            //{ "cliente.0.nombre": { $regex: req.query["cliente"] || "", $options: "i" } },
+                            //{ "contrato.0.nombre": { $regex: req.query["contrato"] || "", $options: "i" } },
+                            { "operador.0.nombre": { $regex: req.query["operador.0.nombre"] || "", $options: "i" } }
                         ]
                     }
-                }, */
+                },
             ]).paginateExec(options)
             res.json(documents)
         } catch (e) {
