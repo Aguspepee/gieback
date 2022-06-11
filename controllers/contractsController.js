@@ -45,7 +45,8 @@ module.exports = {
                 },
                 {$project:{
                     nombre: 1,
-                    cliente: "$cliente.nombre",
+                    cliente:1,
+                    cliente_nombre: "$cliente.nombre",
                     fecha_inicio: 1,
                     area: 1,
                     activo: 1,

@@ -331,6 +331,16 @@ module.exports = {
             "type": "text",
         },
         {
+            "id": "paga[0].nombre",
+            "numeric": false,
+            "disablePadding": false,
+            "label": "Paga",
+            "width": 150,
+            "show": false,
+            "placeHolder": "-",
+            "type": "text",
+        },
+        {
             "id": "modificado",
             "numeric": false,
             "disablePadding": false,

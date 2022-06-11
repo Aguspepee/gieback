@@ -47,6 +47,7 @@ module.exports = {
 
                 {
                     $addFields: {
+                        Id_str: { $toString: "$Id" },
                         semana_carga: { $toString: { '$isoWeek': '$fecha_carga' } },
                         semana_inspeccion: { $toString: { '$isoWeek': '$fecha_inspeccion' } },
                         mes_inspeccion: { $toString: { '$month': '$fecha_inspeccion' } },
@@ -71,12 +72,15 @@ module.exports = {
                 {
                     '$match': {
                         $and: [
+                            { "Id_str": { $regex: req.query["Id"] || "", $options: "i" } },
                             { "numero_reporte": { $regex: req.query["numero_reporte"] || "", $options: "i" } },
                             { "tag": { $regex: req.query["tag"] || "", $options: "i" } },
+                            { "tag_detalle": { $regex: req.query["tag_detalle"] || "", $options: "i" } },
                             { "items.0.descripcion_servicio": { $regex: req.query["items.0.descripcion_servicio"] || "", $options: "i" } },
                             { "items.0.codigo_servicio": { $regex: req.query["items.0.codigo_servicio"] || "", $options: "i" } },
                             { "items_cantidad": { $regex: req.query["items.0.cantidad"] || "", $options: "i" } },
-                            { "inspector": { $regex: req.query["inspector"] || "", $options: "i" } },
+                            { "items.0.tipo_actividad": { $regex: req.query["items.0.tipo_actividad"] || "", $options: "i" } },
+                            { "items.0.clase": { $regex: req.query["items.0.clase"] || "", $options: "i" } },
                             { "numero_orden": { $regex: req.query["numero_orden"] || "", $options: "i" } },
                             /*  { "cliente": { $regex: req.query["cliente"] || "", $options: "i" } },
                              { "contrato": { $regex: req.query["contrato"] || "", $options: "i" } }, */
@@ -88,6 +92,8 @@ module.exports = {
                             { "AAsem_inspeccion": { $regex: req.query["AAsem_inspeccion"] || "", $options: "i" } },
                             { "semana_inspeccion": { $regex: req.query["semana_inspeccion"] || "", $options: "i" } },
                             { "archivo": { $regex: req.query["archivo"] || "", $options: "i" } },
+                            { "observaciones": { $regex: req.query["observaciones"] || "", $options: "i" } },
+                            { "modificado_nombre": { $regex: req.query["modificado_nombre"] || "", $options: "i" } },
 
                             //Campos Booleanos
                             { "trabajo_terminado": { $in: bTA.booleanToArray(req.query["trabajo_terminado"]) || [true, false] } },
@@ -131,22 +137,33 @@ module.exports = {
                     }
                 },
                 {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "paga",
+                        foreignField: "_id",
+                        as: "paga"
+                    }
+                },
+                {
                     $addFields: {
-                        "operador.nombre_completo": {
+                        "operador.nombre": {
                             "$map": {
                                 "input": "$operador",
                                 "as": "o",
                                 "in": { "$concat": ["$$o.apellido", ", ", "$$o.nombre"] },
                             }
-                        }
+                        },
+                        "paga.0.nombre":{$ifNull:["$paga.0.nombre",""]}
                     }
                 },
                 {
                     '$match': {
                         $and: [
-                            //{ "cliente.0.nombre": { $regex: req.query["cliente"] || "", $options: "i" } },
-                            //{ "contrato.0.nombre": { $regex: req.query["contrato"] || "", $options: "i" } },
-                            { "operador.0.nombre": { $regex: req.query["operador.0.nombre"] || "", $options: "i" } }
+                            { "cliente.0.nombre": { $regex: req.query["cliente.0.nombre"] || "", $options: "i" } },
+                            { "contrato.0.nombre": { $regex: req.query["contrato.0.nombre"] || "", $options: "i" } },
+                            { "operador.0.nombre": { $regex: req.query["operador.0.nombre"] || "", $options: "i" } },
+                            { "paga.0.nombre": { $regex: req.query["paga.0.nombre"] || "", $options: "i" } } 
                         ]
                     }
                 },
@@ -203,20 +220,20 @@ module.exports = {
                 tag_detalle: req.body.tag_detalle,
                 informe_realizado: req.body.informe_realizado,
                 operador: req.body.operador,
-                inspector: req.body.inspector,
                 unidad: req.body.unidad,
                 fecha_inspeccion: req.body.fecha_inspeccion,
                 remito_realizado: req.body.remito_realizado,
                 remito_realizado_fecha: req.body.remito_realizado_fecha,
                 remito_numero: req.body.remito_numero,
-                //Datos que salen del contrato
                 contrato: req.body.contrato._id,
-                //cliente: contrato[0].cliente,
-                //area: contrato[0].area,
-                //Datos que salen del item del contrato
                 items: items,
-                //Detalles (por lo general de RX)
-                detalles: req.body.detalles
+                detalles: req.body.detalles,
+                paga: req.body.paga,
+                trabajo_terminado: req.body.trabajo_terminado,
+                trabajo_terminado_fecha: req.body.trabajo_terminado === true ? new Date() : null,
+                informe_realizado: req.body.informe_realizado,
+                informe_realizado_fecha: req.body.informe_realizado === true ? new Date() : null,
+                observaciones: req.body.observaciones
             })
             const document = await parte.save().then()
             console.log("Documento", document)
@@ -300,7 +317,6 @@ module.exports = {
     },
 
     delete: async function (req, res, next) {
-        console.log("HOLAAAAAAAAAAAA")
         try {
             const documents = await partesModel.deleteOne({ _id: req.params.id })
             res.json(documents)
@@ -313,7 +329,6 @@ module.exports = {
 
     deleteMany: async function (req, res, next) {
         const selected = req.params.selected.split(',')
-        console.log("HOLAAAAAAAAAAAA", selected)
         try {
             const documents = await partesModel.deleteMany({ '_id': { '$in': selected } })
             res.json(documents)

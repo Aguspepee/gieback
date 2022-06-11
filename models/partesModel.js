@@ -78,22 +78,23 @@ const partesSchema = mongoose.Schema({
     //DATOS QUE VIENEN EN LA REQ
     numero_reporte: {
         type: String,
+        default:""
     },
     numero_orden: {
         type: String,
+        default:""
     },
     operador: {
         type: mongoose.Schema.ObjectId,
         ref: "users"
     },
-    inspector: {
-        type: String,
-    },
     tag: {
         type: String,
+        default:""
     },
     tag_detalle: {
         type: String,
+        default:""
     },
     unidad: {
         type: String
@@ -104,13 +105,6 @@ const partesSchema = mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "contracts"
     },
-/*     cliente: {
-        type: String,
-        required: [true, errorMessage.GENERAL.campo_obligatorio],
-    }, */
-/*     area: { //Es RX, Inspección u Otro
-        type: String,
-    }, */
     items: [itemsSchema],
     fecha_carga: {
         type: Date,
@@ -122,6 +116,7 @@ const partesSchema = mongoose.Schema({
     },
     observaciones: {
         type: String,
+        default:""
     },
     trabajo_terminado: {
         type: Boolean,
@@ -177,6 +172,7 @@ const partesSchema = mongoose.Schema({
     },
     modificado_nombre: {
         type: String,
+        default:""
     },
     deleted: {
         type: Boolean,
@@ -189,6 +185,11 @@ const partesSchema = mongoose.Schema({
         type: Number,
     },
     detalles: detallesSchema,
+    paga:{
+        type: mongoose.Schema.ObjectId,
+        ref: "clients",
+        default: ""
+    }
 })
 
 partesSchema.pre('save', function (next) {
