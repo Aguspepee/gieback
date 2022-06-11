@@ -20,15 +20,10 @@ const certificantesSchema = mongoose.Schema({
 })
 
 const camposSchema = mongoose.Schema({
-    adicionales: {
-        type: Boolean,
-        enum: [true, false],
-        default: true,
-    },
     cantidad_placas: {
         type: Boolean,
         enum: [true, false],
-        default: true,
+        default: false,
     },
     equipo_completo: {
         type: Boolean,
@@ -38,7 +33,7 @@ const camposSchema = mongoose.Schema({
     diametro: {
         type: Boolean,
         enum: [true, false],
-        default: true,
+        default: false,
     },
     espesor: {
         type: Boolean,
@@ -48,7 +43,7 @@ const camposSchema = mongoose.Schema({
     numero_costuras: {
         type: Boolean,
         enum: [true, false],
-        default: true,
+        default: false,
     },
     numero_orden: {
         type: Boolean,
@@ -60,10 +55,20 @@ const camposSchema = mongoose.Schema({
         enum: [true, false],
         default: true,
     },
-    tipo_rx: { //está en RX
+    unidad: {
         type: Boolean,
         enum: [true, false],
         default: true,
+    },
+    tipo_rx: { //está en RX
+        type: Boolean,
+        enum: [true, false],
+        default: false,
+    },
+    paga: { //está en RX
+        type: Boolean,
+        enum: [true, false],
+        default: false,
     },
 })
 
