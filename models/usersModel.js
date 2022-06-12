@@ -58,6 +58,11 @@ const usersShema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         unique: true
     },
+    numero_orden: {
+        type: String,
+        default: ""
+    },
+
     role: {
         type: String,
         default: "Inspector",
@@ -67,8 +72,6 @@ const usersShema = mongoose.Schema({
     area: {
         type: String,
         default: "Inspección",
-        //enum: ["Inspección", "Radiografía"],
-        //required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     password: {
         type: String,
@@ -90,6 +93,7 @@ const usersShema = mongoose.Schema({
         enum: [true, false],
         default: false
     },
+
     parteColumns: [parteColumnsShema],
     image: {
         type: String,

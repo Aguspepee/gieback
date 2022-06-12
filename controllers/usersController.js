@@ -68,11 +68,12 @@ module.exports = {
                 email: req.body.email,
                 password: req.body.password,
                 role: req.body.roles,
+                area: req.body.area,
+                numero_orden: req.body.numero_orden,
                 active: req.body.active,
                 deleted: req.body.deleted,
                 policy: req.body.policy,
                 parteColumns: parteColumns.parteColumns,
-                //image: req.file.path
             })
             const document = await user.save()
             console.log("se creó", document)
@@ -99,7 +100,6 @@ module.exports = {
                 exp = decoded.exp
                 id = decoded.userId
                 console.log("La ID es", id)
-
             }
         })
 
