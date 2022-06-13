@@ -4,7 +4,8 @@ var router = express.Router();
 const contractsController = require("../controllers/contractsController.js")
 
 /* GET users listing. */
-router.get('/', contractsController.getAll); 
+router.get('/', contractsController.getAll);  
+router.get('/search', contractsController.getSearch);
 router.get('/list', contractsController.getList);
 router.get('/names', contractsController.getNames);
 router.get('/one/:id', contractsController.getOne);

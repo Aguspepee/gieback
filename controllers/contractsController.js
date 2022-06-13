@@ -16,6 +16,53 @@ module.exports = {
         }
     },
 
+    getSearch: async function (req, res, next) {
+        console.log("search")
+        try {
+            const documents = await contractsModel.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            { "nombre": { $regex: req.query["nombre"] || "", $options: "i" } },
+                            { deleted: false }
+                        ]
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "cliente",
+                        foreignField: "_id",
+                        as: "cliente"
+                    }
+                },
+                {
+                    $project: {
+                        nombre: 1,
+                        cliente: 1,
+                        cliente_nombre: "$cliente.nombre",
+                        fecha_inicio: 1,
+                        area: 1,
+                        activo: 1,
+                        campos: 1,
+                        unidades: 1,
+                        certificantes: 1,
+                        "items.descripcion_servicio": 1,
+                        "items.clase": 1,
+                        "items.unidad_medida": 1
+                    }
+                }
+            ])
+            res.json(documents)
+            console.log()
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     getNames: async function (req, res, next) {
         try {
             const documents = await contractsModel.find({}, { nombre: 1, _id: 0 })
@@ -29,8 +76,6 @@ module.exports = {
         }
     },
 
-   
-
     getList: async function (req, res, next) {
         try {
             const documents = await contractsModel.aggregate([
@@ -43,39 +88,23 @@ module.exports = {
                         as: "cliente"
                     }
                 },
-                {$project:{
-                    nombre: 1,
-                    cliente:1,
-                    cliente_nombre: "$cliente.nombre",
-                    fecha_inicio: 1,
-                    area: 1,
-                    activo: 1,
-                    campos: 1,
-                    unidades: 1,
-                    certificantes: 1,
-                    "items.descripcion_servicio": 1,
-                    "items.clase": 1,
-                    "items.unidad_medida":1
-
+                {
+                    $project: {
+                        nombre: 1,
+                        cliente: 1,
+                        cliente_nombre: "$cliente.nombre",
+                        fecha_inicio: 1,
+                        area: 1,
+                        activo: 1,
+                        campos: 1,
+                        unidades: 1,
+                        certificantes: 1,
+                        "items.descripcion_servicio": 1,
+                        "items.clase": 1,
+                        "items.unidad_medida": 1
+                    }
                 }
-
-                }
-                
-                
-                
-                /* {
-                nombre: 1,
-                cliente: 1,
-                fecha_inicio: 1,
-                area: 1,
-                activo: 1,
-                campos: 1,
-                unidades: 1,
-                certificantes: 1,
-                "items.descripcion_servicio": 1,
-                "items.clase": 1,
-                "items.unidad_medida":1
-            } */])
+            ])
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -96,13 +125,13 @@ module.exports = {
     },
 
     getOne: async function (req, res, next) {
-        console.log("esta",req.params.id)
+        console.log("esta", req.params.id)
         try {
             const documents = await contractsModel.aggregate([
                 {
-                  $match: {
-                    _id: ObjectId(req.params.id),
-                  },
+                    $match: {
+                        _id: ObjectId(req.params.id),
+                    },
                 },
                 {
                     $lookup:
@@ -113,7 +142,7 @@ module.exports = {
                         as: "cliente"
                     }
                 }
-              ]);
+            ]);
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -214,7 +243,7 @@ module.exports = {
 
     delete: async function (req, res, next) {
         try {
-            const documents = await contractsModel.deleteOne({ _id: req.params.id })
+            const documents = await contractsModel.findByIdAndUpdate(req.params.id, { deleted: true }, { new: true })
             res.json(documents)
         } catch (e) {
             console.log(e)

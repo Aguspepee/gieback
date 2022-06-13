@@ -7,7 +7,8 @@ const clientsShema = mongoose.Schema({
     nombre: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
+        minlength: [3, errorMessage.GENERAL.min_length],
+        unique: true,
     },
     direccion: {
         type: String,
@@ -28,6 +29,7 @@ const clientsShema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
         maxlength: [3, errorMessage.GENERAL.min_length]
     },
+
     deleted: {
         type: Boolean,
         enum: [true, false],

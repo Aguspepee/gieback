@@ -1,14 +1,34 @@
 const clientsModel = require("../models/clientsModel")
-const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
-const CONFIG = require("../config/config")
-
 
 module.exports = {
     getAll: async function (req, res, next) {
         console.log("entro")
         try {
-            const documents = await clientsModel.find()
+            const documents = await clientsModel.aggregate([
+                { $match: { deleted: false } }
+            ])
+            res.json(documents)
+            console.log()
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    getSearch: async function (req, res, next) {
+        console.log("search")
+        try {
+            const documents = await clientsModel.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            { "nombre": { $regex: req.query["nombre"] || "", $options: "i" } },
+                            { deleted: false }
+                        ]
+                    }
+                }
+            ])
             res.json(documents)
             console.log()
         } catch (e) {
@@ -20,7 +40,10 @@ module.exports = {
 
     getNames: async function (req, res, next) {
         try {
-            const documents = await clientsModel.find({}, { nombre: 1, _id: 0 })
+            const documents = await clientsModel.aggregate([
+                { $match: { deleted: false } },
+                { $project: { nombre: 1, _id: 0 } }
+            ])
             let names = documents.map((documents) => documents.nombre)
             console.log(names)
             res.json(names)
@@ -52,7 +75,7 @@ module.exports = {
                 telefono: req.body.telefono,
                 abreviatura: req.body.abreviatura,
                 active: req.body.active,
-                //deleted: req.body.deleted,
+              //deleted: req.body.deleted,
                 //image: req.body.image,
             })
             const document = await clients.save()
@@ -74,21 +97,21 @@ module.exports = {
                 email: req.body.email,
                 telefono: req.body.telefono,
                 abreviatura: req.body.abreviatura,
-                active: req.body.active
+                active: req.body.active,
             }
-            const document = await clientsModel.findByIdAndUpdate(req.params.id, client ,{new: true})
+            const document = await clientsModel.findByIdAndUpdate(req.params.id, client, { new: true })
             console.log("se actualizó", document)
             res.status(201).json(document);
         } catch (e) {
             console.log(e)
             e.status = 400
             next(e)
-        }  
+        }
     },
 
     delete: async function (req, res, next) {
         try {
-            const documents = await clientsModel.deleteOne({_id:req.params.id})
+            const documents = await clientsModel.findByIdAndUpdate(req.params.id, { deleted: true }, { new: true })
             res.json(documents)
         } catch (e) {
             console.log(e)

@@ -131,9 +131,17 @@ const contractsShema = mongoose.Schema({
         type: Date,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
+    ref_oc: {
+        type: String,
+        required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
     activo: {
         type: Boolean,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
+    },
+    deleted: {
+        type: Boolean,
+        default: false
     },
     items: [itemsSchema],
     unidades: [unidadesSchema],

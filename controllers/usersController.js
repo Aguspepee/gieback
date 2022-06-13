@@ -18,6 +18,35 @@ module.exports = {
         }
     },
 
+    getSearch: async function (req, res, next) {
+        console.log("search")
+        try {
+            const documents = await usersModel.aggregate([
+                { $match: { deleted: false } },
+                {
+                    $addFields:{
+                        nombre_completo: {$concat:["$nombre"," ","$apellido"]}
+                       
+                    }
+                },
+                {
+                    $match: {
+                        $and: [
+                            { "nombre_completo": { $regex: req.query["nombre"] || "", $options: "i" } },
+                            { deleted: false }
+                        ]
+                    }
+                }
+            ])
+            res.json(documents)
+            console.log()
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     getNames: async function (req, res, next) {
         try {
             const documents = await usersModel.find({}, { nombre: 1, apellido: 1 })
@@ -56,7 +85,7 @@ module.exports = {
             console.log(e)
             e.status = 400
             next(e)
-        } 
+        }
     },
 
     register: async function (req, res, next) {
@@ -86,7 +115,6 @@ module.exports = {
     },
 
     whoami: async function (req, res, next) {
-
         let id
         let exp
         let token = req.headers.authorization.split(" ")[1]
@@ -102,10 +130,9 @@ module.exports = {
                 console.log("La ID es", id)
             }
         })
-
         try {
             const user = await usersModel.find({ _id: id })
-            res.json({exp:exp,...user})
+            res.json({ exp: exp, ...user })
         } catch (e) {
             console.log(e)
             e.status = 400
@@ -116,18 +143,19 @@ module.exports = {
     edit: async function (req, res, next) {
         console.log(req.params.id)
         try {
-            const contract = {
+            const user = {
                 nombre: req.body.nombre,
                 apellido: req.body.apellido,
                 email: req.body.email,
                 area: req.body.area,
                 role: req.body.role,
+                numero_orden: req.body.numero_orden,
                 active: req.body.active,
                 deleted: req.body.deleted,
-                policy: req.body.policy,
                 parteColumns: req.body.parteColumns,
+                password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined
             }
-            const document = await usersModel.findByIdAndUpdate(req.params.id, contract, { new: true })
+            const document = await usersModel.findByIdAndUpdate(req.params.id, user, { new: true })
             console.log("se actualizó", document)
             res.status(201).json(document);
         } catch (e) {
@@ -139,7 +167,7 @@ module.exports = {
 
     delete: async function (req, res, next) {
         try {
-            const documents = await usersModel.deleteOne({ _id: req.params.id })
+            const documents = await usersModel.findByIdAndUpdate(req.params.id, { deleted: true }, { new: true })
             res.json(documents)
         } catch (e) {
             console.log(e)
