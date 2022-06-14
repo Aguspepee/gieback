@@ -24,7 +24,7 @@ module.exports = {
                     $match: {
                         $and: [
                             { "nombre": { $regex: req.query["nombre"] || "", $options: "i" } },
-                            { deleted: false }
+                            { deleted: false },
                         ]
                     }
                 },
@@ -216,6 +216,7 @@ module.exports = {
 
     edit: async function (req, res, next) {
         console.log(req.params.id)
+        console.log(req.body)
         try {
             const contract = {
                 nombre: req.body.nombre,
