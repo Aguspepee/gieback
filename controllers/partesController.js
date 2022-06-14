@@ -2,6 +2,7 @@ const partesModel = require("../models/partesModel")
 const contractsModel = require("../models/contractsModel")
 const bTA = require("../util/booleanToArray")
 var qs = require('qs');
+var ObjectId = require('mongodb').ObjectID;
 
 
 module.exports = {
@@ -18,7 +19,48 @@ module.exports = {
 
     getOne: async function (req, res, next) {
         try {
-            const documents = await partesModel.findById(req.params.id)
+            const documents = await partesModel.aggregate([
+                {
+                    $match: { _id: ObjectId(req.params.id) }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "users",
+                        localField: "operador",
+                        foreignField: "_id",
+                        as: "operador"
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "contracts",
+                        localField: "contrato",
+                        foreignField: "_id",
+                        as: "contrato"
+                    }
+                },
+                { $unset: ['contrato.items.valor', 'contrato.certificantes', 'contrato.descripcion_servicio'] },
+                {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "contrato.cliente",
+                        foreignField: "_id",
+                        as: "cliente"
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "paga",
+                        foreignField: "_id",
+                        as: "paga"
+                    }
+                },
+            ])
             res.json(documents)
         } catch (e) {
             console.log(e)
@@ -31,7 +73,7 @@ module.exports = {
         partesModel.collection.getIndexes({ full: true }).then(indexes => {
             //console.log("indexes:", indexes);
             // ...
-            console.log(req.query)
+           // console.log(req.query)
         }).catch(console.error);
         const options = {
             page: req.query.page,
@@ -126,7 +168,7 @@ module.exports = {
                         as: "contrato"
                     }
                 },
-                { $unset: ['contrato.items', 'contrato.unidades', 'contrato.certificantes', 'contrato.campos', 'contrato.descripcion_servicio'] },
+                { $unset: ['contrato.items.valor', 'contrato.certificantes', 'contrato.descripcion_servicio'] },
                 {
                     $lookup:
                     {
@@ -147,14 +189,14 @@ module.exports = {
                 },
                 {
                     $addFields: {
-                        "operador.nombre": {
+                        "operador.nombre_completo": {
                             "$map": {
                                 "input": "$operador",
                                 "as": "o",
                                 "in": { "$concat": ["$$o.apellido", ", ", "$$o.nombre"] },
                             }
                         },
-                        "paga.0.nombre":{$ifNull:["$paga.0.nombre",""]}
+                        "paga.0.nombre": { $ifNull: ["$paga.0.nombre", ""] }
                     }
                 },
                 {
@@ -163,7 +205,7 @@ module.exports = {
                             { "cliente.0.nombre": { $regex: req.query["cliente.0.nombre"] || "", $options: "i" } },
                             { "contrato.0.nombre": { $regex: req.query["contrato.0.nombre"] || "", $options: "i" } },
                             { "operador.0.nombre": { $regex: req.query["operador.0.nombre"] || "", $options: "i" } },
-                            { "paga.0.nombre": { $regex: req.query["paga.0.nombre"] || "", $options: "i" } } 
+                            { "paga.0.nombre": { $regex: req.query["paga.0.nombre"] || "", $options: "i" } }
                         ]
                     }
                 },
@@ -246,44 +288,42 @@ module.exports = {
     },
 
     edit: async function (req, res, next) {
-        console.log(req.params.id)
+        const data = req.body
         try {
-            let contrato
-            let items
-            if (req.body.contrato) {
-                //Se busca el contrato en la colección de contratos
-                contrato = await contractsModel.find({ nombre: req.body.contrato })
-                items = req.body.items.map((item) => {
-                    let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
-                    item_contrato.cantidad = item.cantidad
-                    return (item_contrato)
-                })
-                //Se asignan los valores al los items
-                items[0].valor_unitario = items[0].valor
-                items[0].valor_total = items[0].valor * items[0].cantidad
-                for (let i = 1; i < items.length; i++) {
-                    //Si es porcentaje adicional calcula el porcentaje
-                    if (items[i].unidad_medida === "Porcentaje adicional") {
-                        items[i].valor_unitario = items[0].valor * items[0].cantidad * items[i].valor * 1 / 100;
-                        items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
-                        //Si no es porcentaje adicional lo calcula como un item común
-                    } else {
-                        items[i].valor_unitario = items[i].valor
-                        items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
-                    }
+            //Se busca el contrato en la colección de contratos
+            const contrato = await contractsModel.find({ _id: data.contrato._id })
+            let items = data.items.map((item) => {
+                let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
+                item_contrato.cantidad = item.cantidad
+                return (item_contrato)
+            })
+            //Se asignan los valores al los items
+            items[0].valor_unitario = items[0].valor
+            items[0].valor_total = items[0].valor * items[0].cantidad
+            for (let i = 1; i < items.length; i++) {
+                //Si es porcentaje adicional calcula el porcentaje
+                if (items[i].unidad_medida === "Porcentaje adicional") {
+                    items[i].valor_unitario = items[0].valor * items[0].cantidad * items[i].valor * 1 / 100;
+                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                    //Si no es porcentaje adicional lo calcula como un item común
+                } else {
+                    items[i].valor_unitario = items[i].valor
+                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
                 }
             }
 
             const parte = {
                 //Datos que vienen de la req
-                numero_reporte: req.body.numero_reporte,
-                numero_orden: req.body.numero_orden,
-                tag: req.body.tag,
-                tag_detalle: req.body.tag_detalle,
-                operador: req.body.operador,
-                inspector: req.body.inspector,
-                unidad: req.body.unidad,
-                fecha_inspeccion: req.body.fecha_inspeccion,
+                numero_reporte: data.numero_reporte,
+                numero_orden: data.numero_orden,
+                tag: data.tag,
+                tag_detalle: data.tag_detalle,
+                operador: data.operador._id,
+                unidad: data.unidad,
+                fecha_inspeccion: data.fecha_inspeccion,
+                observaciones: data.observaciones,
+                detalles: data.detalles,
+
 
                 //Pares BOOLEANO-FECHA
                 trabajo_terminado: req.body.trabajo_terminado,
@@ -297,14 +337,8 @@ module.exports = {
                 certificado_realizado: req.body.certificado_realizado,
                 certificado_realizado_fecha: req.body.certificado_realizado ? Date() : (req.body.certificado_realizado === false ? null : undefined),
 
-                //Datos que salen del contrato
-                contrato: contrato ? contrato[0]?.nombre : undefined,
-                cliente: contrato ? contrato[0]?.cliente : undefined,
-                area: contrato ? contrato[0]?.area : undefined,
                 //Datos que salen del item del contrato
                 items: items || undefined,
-                //Detalles (por lo general de RX)
-                detalles: req.body.detalles
             }
             const document = await partesModel.findByIdAndUpdate(req.params.id, parte, { new: true })
             console.log("se actualizó", document)
