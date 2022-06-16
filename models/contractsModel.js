@@ -25,11 +25,6 @@ const camposSchema = mongoose.Schema({
         enum: [true, false],
         default: false,
     },
-    equipo_completo: {
-        type: Boolean,
-        enum: [true, false],
-        default: true,
-    },
     diametro: {
         type: Boolean,
         enum: [true, false],
@@ -115,6 +110,10 @@ const contractsShema = mongoose.Schema({
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
+    version: {
+        type: String,
+        default:0
+    },
     area: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
@@ -133,7 +132,6 @@ const contractsShema = mongoose.Schema({
     },
     ref_oc: {
         type: String,
-        required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     activo: {
         type: Boolean,

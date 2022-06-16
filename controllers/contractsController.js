@@ -43,6 +43,8 @@ module.exports = {
                         cliente: 1,
                         cliente_nombre: "$cliente.nombre",
                         fecha_inicio: 1,
+                        version: 1,
+                        ref_oc: 1,
                         area: 1,
                         activo: 1,
                         campos: 1,
@@ -221,6 +223,8 @@ module.exports = {
             const contract = {
                 nombre: req.body.nombre,
                 descripcion: req.body.descripcion,
+                ref_oc: req.body.ref_oc,
+                version: req.body.version,
                 area: req.body.area,
                 cliente: req.body.cliente,
                 fecha_inicio: req.body.fecha_inicio,

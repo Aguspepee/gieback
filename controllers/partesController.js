@@ -73,7 +73,7 @@ module.exports = {
         partesModel.collection.getIndexes({ full: true }).then(indexes => {
             //console.log("indexes:", indexes);
             // ...
-           // console.log(req.query)
+            // console.log(req.query)
         }).catch(console.error);
         const options = {
             page: req.query.page,
@@ -288,27 +288,35 @@ module.exports = {
     },
 
     edit: async function (req, res, next) {
+        console.log("Hola",req.body)
+        console.log("Params",req.params.id)
         const data = req.body
+        let items
         try {
-            //Se busca el contrato en la colección de contratos
-            const contrato = await contractsModel.find({ _id: data.contrato._id })
-            let items = data.items.map((item) => {
-                let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
-                item_contrato.cantidad = item.cantidad
-                return (item_contrato)
-            })
-            //Se asignan los valores al los items
-            items[0].valor_unitario = items[0].valor
-            items[0].valor_total = items[0].valor * items[0].cantidad
-            for (let i = 1; i < items.length; i++) {
-                //Si es porcentaje adicional calcula el porcentaje
-                if (items[i].unidad_medida === "Porcentaje adicional") {
-                    items[i].valor_unitario = items[0].valor * items[0].cantidad * items[i].valor * 1 / 100;
-                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
-                    //Si no es porcentaje adicional lo calcula como un item común
-                } else {
-                    items[i].valor_unitario = items[i].valor
-                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+
+            if (req.body.contrato) {
+
+
+                //Se busca el contrato en la colección de contratos
+                const contrato = await contractsModel.find({ _id: data.contrato._id })
+                items = data.items.map((item) => {
+                    let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
+                    item_contrato.cantidad = item.cantidad
+                    return (item_contrato)
+                })
+                //Se asignan los valores al los items
+                items[0].valor_unitario = items[0].valor
+                items[0].valor_total = items[0].valor * items[0].cantidad
+                for (let i = 1; i < items.length; i++) {
+                    //Si es porcentaje adicional calcula el porcentaje
+                    if (items[i].unidad_medida === "Porcentaje adicional") {
+                        items[i].valor_unitario = items[0].valor * items[0].cantidad * items[i].valor * 1 / 100;
+                        items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                        //Si no es porcentaje adicional lo calcula como un item común
+                    } else {
+                        items[i].valor_unitario = items[i].valor
+                        items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                    }
                 }
             }
 
@@ -318,7 +326,7 @@ module.exports = {
                 numero_orden: data.numero_orden,
                 tag: data.tag,
                 tag_detalle: data.tag_detalle,
-                operador: data.operador._id,
+                operador: data.operador ? data.operador._id : undefined,
                 unidad: data.unidad,
                 fecha_inspeccion: data.fecha_inspeccion,
                 observaciones: data.observaciones,
@@ -338,7 +346,7 @@ module.exports = {
                 certificado_realizado_fecha: req.body.certificado_realizado ? Date() : (req.body.certificado_realizado === false ? null : undefined),
 
                 //Datos que salen del item del contrato
-                items: items || undefined,
+                items: items ? items : undefined,
             }
             const document = await partesModel.findByIdAndUpdate(req.params.id, parte, { new: true })
             console.log("se actualizó", document)
