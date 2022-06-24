@@ -39,6 +39,10 @@ const parteColumnsShema = mongoose.Schema({
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
+    search: {
+        type: String,
+        default: null,
+    },
 })
 
 //USERS schema
@@ -80,12 +84,10 @@ const usersShema = mongoose.Schema({
     },
     active: {
         type: Boolean,
-        enum: [true, false],
         default: true,
     },
     deleted: {
         type: Boolean,
-        enum: [true, false],
         default: false
     },
     policy: {
@@ -93,7 +95,10 @@ const usersShema = mongoose.Schema({
         enum: [true, false],
         default: false
     },
-
+    hidden: {
+        type: Boolean,
+        default: false,
+    },
     parteColumns: [parteColumnsShema],
     image: {
         type: String,

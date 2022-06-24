@@ -83,9 +83,9 @@ module.exports = {
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
-                /*                 {
-                                    '$match': { remito_realizado: true }
-                                },  */
+                {
+                    '$match': { remito_realizado: false }
+                }, 
 
                 {
                     $addFields: {
@@ -196,7 +196,7 @@ module.exports = {
                                 "in": { "$concat": ["$$o.apellido", ", ", "$$o.nombre"] },
                             }
                         },
-                        "paga.0.nombre": { $ifNull: ["$paga.0.nombre", ""] }
+                        "paga.0.nombre": { $ifNull: ["$paga.0.nombre", "626d99480581fea5022d628e"] }
                     }
                 },
                 {
@@ -232,7 +232,7 @@ module.exports = {
     create: async function (req, res, next) {
         try {
             //Se busca el contrato en la colección de contratos
-            console.log("Contrato", req.body.contrato)
+            //console.log("Contrato", req.body.contrato)
             const contrato = await contractsModel.find({ _id: req.body.contrato })
             let items = req.body.items.map((item) => {
                 let item_contrato = (contrato[0].items.filter(items => items.descripcion_servicio === item.descripcion_servicio)[0]).toJSON()
@@ -278,18 +278,80 @@ module.exports = {
                 observaciones: req.body.observaciones
             })
             const document = await parte.save().then()
-            console.log("Documento", document)
-            res.status(201).json(document);
+            //console.log("Documento", document)
+            res.json("guardó");
         } catch (e) {
+            console.log("ERROR",req.body)
             console.log(e)
             e.status = 400
             next(e)
         }
     },
 
+
+    masiva: async function (req, res, next) {
+        try {
+            //Se busca el contrato en la colección de contratos
+            //console.log("Contrato", req.body.contrato)
+            const contrato = await contractsModel.find({ _id: req.body.contrato })
+            let items = req.body.items.map((item) => {
+                let item_contrato = (contrato[0].items.filter(items => items.codigo_servicio === item.codigo_servicio)[0]).toJSON()
+                item_contrato.cantidad = item.cantidad
+                return (item_contrato)
+            })
+            //Se asignan los valores al los items
+            items[0].valor_unitario = items[0].valor
+            items[0].valor_total = items[0].valor * items[0].cantidad
+            for (let i = 1; i < items.length; i++) {
+                //Si es porcentaje adicional calcula el porcentaje
+                if (items[i].unidad_medida === "Porcentaje adicional") {
+                    items[i].valor_unitario = items[0].valor * items[0].cantidad * items[i].valor * 1 / 100;
+                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                    //Si no es porcentaje adicional lo calcula como un item común
+                } else {
+                    items[i].valor_unitario = items[i].valor
+                    items[i].valor_total = items[i].valor_unitario * items[i].cantidad;
+                }
+            }
+
+            const parte = new partesModel({
+                //Datos que vienen de la req
+                numero_reporte: req.body.numero_reporte,
+                numero_orden: req.body.numero_orden,
+                tag: req.body.tag,
+                tag_detalle: req.body.tag_detalle,
+                informe_realizado: req.body.informe_realizado,
+                operador: req.body.operador,
+                unidad: req.body.unidad,
+                fecha_inspeccion: req.body.fecha_inspeccion,
+                remito_realizado: req.body.remito_realizado,
+                remito_realizado_fecha: req.body.remito_realizado_fecha,
+                remito_numero: req.body.remito_numero,
+                contrato: req.body.contrato._id,
+                items: items,
+                detalles: req.body.detalles,
+                paga: req.body.paga,
+                trabajo_terminado: req.body.trabajo_terminado,
+                trabajo_terminado_fecha: req.body.trabajo_terminado === true ? new Date() : null,
+                informe_realizado: req.body.informe_realizado,
+                informe_realizado_fecha: req.body.informe_realizado === true ? new Date() : null,
+                observaciones: req.body.observaciones
+            })
+            const document = await parte.save().then()
+            //console.log("Documento", document)
+            res.json("guardó");
+        } catch (e) {
+            console.log("ERROR",req.body)
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+
     edit: async function (req, res, next) {
-        console.log("Hola",req.body)
-        console.log("Params",req.params.id)
+        console.log("Hola", req.body)
+        console.log("Params", req.params.id)
         const data = req.body
         let items
         try {

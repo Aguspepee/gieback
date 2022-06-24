@@ -96,7 +96,7 @@ module.exports = {
                 apellido: req.body.apellido,
                 email: req.body.email,
                 password: req.body.password,
-                role: req.body.roles,
+                role: req.body.role,
                 area: req.body.area,
                 numero_orden: req.body.numero_orden,
                 active: req.body.active,

@@ -10,6 +10,7 @@ router.get('/restricted', partesController.getRestricted);
 router.get('/unrestricted', partesController.getUnrestricted);
 
 router.post('/create', partesController.create);
+router.post('/masiva', partesController.masiva);
 
 router.put('/edit/:id', partesController.edit);
 

@@ -73,16 +73,16 @@ const itemsSchema = mongoose.Schema({
 const partesSchema = mongoose.Schema({
     Id: {
         type: Number,
-        require: true 
+        require: true
     },
     //DATOS QUE VIENEN EN LA REQ
     numero_reporte: {
         type: String,
-        default:""
+        default: ""
     },
     numero_orden: {
         type: String,
-        default:""
+        default: ""
     },
     operador: {
         type: mongoose.Schema.ObjectId,
@@ -90,11 +90,11 @@ const partesSchema = mongoose.Schema({
     },
     tag: {
         type: String,
-        default:""
+        default: ""
     },
     tag_detalle: {
         type: String,
-        default:""
+        default: ""
     },
     unidad: {
         type: String
@@ -116,7 +116,7 @@ const partesSchema = mongoose.Schema({
     },
     observaciones: {
         type: String,
-        default:""
+        default: ""
     },
     trabajo_terminado: {
         type: Boolean,
@@ -142,16 +142,48 @@ const partesSchema = mongoose.Schema({
         type: Date,
         default: null
     },
+
+    //REMITOS
+    remito_numero: {
+        type: Number,
+        default: null
+    },
     remito_realizado: {
         type: Boolean,
         default: false,
-        index: true
-    },
-    remito_numero: {
-        type: Number,
     },
     remito_realizado_fecha: {
         type: Date,
+        default: null
+    },
+    remito_revisado: {
+        type: Boolean,
+        default: false,
+    },
+    remito_revisado_fecha: {
+        type: Date,
+        default: null
+    },
+    remito_entregado: {
+        type: Boolean,
+        default: false,
+    },
+    remito_entregado_fecha: {
+        type: Date,
+        default: null
+    },
+    remito_firmado: {
+        type: Boolean,
+        default: false,
+    },
+    remito_firmado_fecha: {
+        type: Date,
+        default: null
+    },
+
+    //CERTIFICADO
+    certificado_numero: {
+        type: Number,
         default: null
     },
     certificado_realizado: {
@@ -162,6 +194,20 @@ const partesSchema = mongoose.Schema({
         type: Date,
         default: null
     },
+    certificado_finalizado: {
+        type: Boolean,
+        default: false
+    },
+    certificado_finalizado_fecha: {
+        type: Date,
+        default: null
+    },
+    certificado_certificante: {
+        type: String,
+        default: null
+    },
+
+    //Varios
     modificado: {
         type: Boolean,
         default: false
@@ -172,7 +218,7 @@ const partesSchema = mongoose.Schema({
     },
     modificado_nombre: {
         type: String,
-        default:""
+        default: ""
     },
     deleted: {
         type: Boolean,
@@ -185,7 +231,7 @@ const partesSchema = mongoose.Schema({
         type: Number,
     },
     detalles: detallesSchema,
-    paga:{
+    paga: {
         type: mongoose.Schema.ObjectId,
         ref: "clients",
         default: ""
