@@ -10,11 +10,14 @@ var cors = require('cors')
 var AuthToken = require("./middlewares/authToken")
 
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/usersRouter');
-var contractsRouter = require('./routes/contractsRouter');
-var clientsRouter = require('./routes/clientsRouter');
-var partesRouter = require('./routes/partesRouter')
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/usersRouter');
+const contractsRouter = require('./routes/contractsRouter');
+const clientsRouter = require('./routes/clientsRouter');
+const partesRouter = require('./routes/partesRouter');
+const remitosRouter = require('./routes/remitosRouter');
+const certificacionesRouter = require('./routes/certificacionesRouter');
+const settingsRouter = require('./routes/settingsRouter');
 
 var app = express();
 
@@ -25,8 +28,8 @@ app.set("secretKey", "gie2022")
 app.use(cors())
 
 //Setea la ubicación de las imagenes
-app.use('/clients-images',express.static('clients-images'));
-app.use('/users-images',express.static('users-images'));
+app.use('/clients-images', express.static('clients-images'));
+app.use('/users-images', express.static('users-images'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,16 +47,19 @@ app.use(AuthToken)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/contracts', contractsRouter);
-app.use('/clients/',clientsRouter)
-app.use('/partes/',partesRouter)
+app.use('/clients/', clientsRouter);
+app.use('/partes/', partesRouter);
+app.use('/remitos/', remitosRouter);
+app.use('/certificaciones/', certificacionesRouter);
+app.use('/settings/', settingsRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

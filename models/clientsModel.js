@@ -3,7 +3,7 @@ const errorMessage = require("../util/errorMessage")
 
 
 //creación schema
-const clientsShema = mongoose.Schema({
+const clientsSchema = mongoose.Schema({
     nombre: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
@@ -44,4 +44,4 @@ const clientsShema = mongoose.Schema({
 })
 //creación model
 
-module.exports = mongoose.model("clients", clientsShema)
+module.exports = mongoose.model("clients", clientsSchema)

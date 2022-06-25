@@ -83,9 +83,9 @@ module.exports = {
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
-                {
+/*                 {
                     '$match': { remito_realizado: false }
-                }, 
+                },  */
 
                 {
                     $addFields: {
@@ -327,6 +327,9 @@ module.exports = {
                 remito_realizado: req.body.remito_realizado,
                 remito_realizado_fecha: req.body.remito_realizado_fecha,
                 remito_numero: req.body.remito_numero,
+                certificado_realizado: req.body.certificado_realizado,
+                certificado_realizado_fecha: req.body.certificado_realizado_fecha,
+                certificado_numero: req.body.certificado_numero,
                 contrato: req.body.contrato._id,
                 items: items,
                 detalles: req.body.detalles,
@@ -335,6 +338,7 @@ module.exports = {
                 trabajo_terminado_fecha: req.body.trabajo_terminado === true ? new Date() : null,
                 informe_realizado: req.body.informe_realizado,
                 informe_realizado_fecha: req.body.informe_realizado === true ? new Date() : null,
+
                 observaciones: req.body.observaciones
             })
             const document = await parte.save().then()

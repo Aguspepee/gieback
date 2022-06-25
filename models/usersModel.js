@@ -10,12 +10,10 @@ const parteColumnsShema = mongoose.Schema({
     },
     numeric: {
         type: Boolean,
-        enum: [true, false],
         default: false
     },
     disablePadding: {
         type: Boolean,
-        enum: [true, false],
         default: true
     },
     label: {
