@@ -15,6 +15,7 @@ router.post('/whoami', usersController.whoami);
 //router.post('/image', upload.single('userImage'), usersController.image);
 
 router.put('/edit/:id', usersController.edit);
+router.put('/update', usersController.update);
 router.put('/image/:id-:collection', upload.single('userImage'), usersController.image);
 
 router.delete('/:id', usersController.delete);

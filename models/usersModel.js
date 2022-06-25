@@ -3,7 +3,7 @@ const errorMessage = require("../util/errorMessage")
 const bcrypt = require("bcrypt")
 
 //Subshema donde se definen las columnas del Parte Diario
-const parteColumnsShema = mongoose.Schema({
+const columnsShema = mongoose.Schema({
     id: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
@@ -97,7 +97,9 @@ const usersShema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    parteColumns: [parteColumnsShema],
+    parteColumns: [columnsShema],
+    remitoColumns: [columnsShema],
+    certificacionColumns: [columnsShema],
     image: {
         type: String,
     },

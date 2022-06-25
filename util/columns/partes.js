@@ -9,6 +9,7 @@ module.exports = {
             "show": true,
             "placeHolder": "#",
             "type": "number",//text, number, date, select, none
+            "search":null
         },
         {
             "id": "numero_reporte",
@@ -19,6 +20,7 @@ module.exports = {
             "show": true,
             "placeHolder": "#",
             "type": "text",
+            "search":null
         },
         {
             "id": "tag",
@@ -29,6 +31,7 @@ module.exports = {
             "show": true,
             "placeHolder": "#",
             "type": "text",
+            "search":null
         },
         {
             "id": "tag_detalle",
@@ -39,6 +42,7 @@ module.exports = {
             "show": false,
             "placeHolder": "#",
             "type": "text",
+            "search":null
         },
         {
             "id": "items[0].descripcion_servicio",
@@ -49,6 +53,7 @@ module.exports = {
             "show": true,
             "placeHolder": "Servicio",
             "type": "text",
+            "search":null
         },
         {
             "id": "items[0].cantidad",
@@ -59,6 +64,7 @@ module.exports = {
             "show": true,
             "placeHolder": "#",
             "type": "text",
+            "search":null
         },
         {
             "id": "items[0].tipo_actividad",
@@ -69,6 +75,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "items[0].clase",
@@ -79,6 +86,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "operador[0].nombre",
@@ -89,6 +97,7 @@ module.exports = {
             "show": false,
             "placeHolder": "Operador",
             "type": "text",
+            "search":null
         },
         {
             "id": "numero_orden",
@@ -99,6 +108,7 @@ module.exports = {
             "show": false,
             "placeHolder": "#",
             "type": "text",
+            "search":null
         },
         {
             "id": "cliente[0].nombre",
@@ -109,6 +119,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "contrato[0].nombre",
@@ -119,6 +130,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "unidad",
@@ -129,6 +141,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "fecha_carga",
@@ -139,6 +152,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         },
         {
             "id": "semana_carga",
@@ -149,6 +163,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "fecha_inspeccion",
@@ -159,6 +174,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         },
         {
             "id": "AAMM_inspeccion",
@@ -169,6 +185,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "AAsem_inspeccion",
@@ -179,6 +196,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "semana_inspeccion",
@@ -189,6 +207,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "trabajo_terminado",
@@ -199,6 +218,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "select",
+            "search":null
         },
         {
             "id": "trabajo_terminado_fecha",
@@ -209,6 +229,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         },
         {
             "id": "informe_realizado",
@@ -219,6 +240,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "select",
+            "search":null
         },
         {
             "id": "informe_realizado_fecha",
@@ -229,6 +251,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         },
         {
             "id": "informe_revisado",
@@ -239,6 +262,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "select",
+            "search":null
         },
         {
             "id": "informe_revisado_fecha",
@@ -249,6 +273,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         },
         {
             "id": "remito_realizado",
@@ -259,6 +284,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "select",
+            "search":null
         },
         {
             "id": "remito_numero",
@@ -269,6 +295,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "number",
+            "search":null
         },
         {
             "id": "remito_realizado_fecha",
@@ -279,6 +306,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         },
         {
             "id": "certificado_realizado",
@@ -289,6 +317,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "select",
+            "search":null
         },
         {
             "id": "certificado_fecha",
@@ -299,6 +328,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         },
         {
             "id": "items[0].codigo_servicio",
@@ -309,6 +339,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "archivo",
@@ -319,6 +350,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "observaciones",
@@ -329,6 +361,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "paga[0].nombre",
@@ -339,6 +372,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "modificado",
@@ -349,6 +383,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "select",
+            "search":null
         },
         {
             "id": "modificado_nombre",
@@ -359,6 +394,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "text",
+            "search":null
         },
         {
             "id": "modificado_fecha",
@@ -369,6 +405,7 @@ module.exports = {
             "show": false,
             "placeHolder": "-",
             "type": "date",
+            "search":null
         }
     ]
 }

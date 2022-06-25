@@ -70,11 +70,6 @@ module.exports = {
     },
 
     getRestricted: async function (req, res, next) {
-        partesModel.collection.getIndexes({ full: true }).then(indexes => {
-            //console.log("indexes:", indexes);
-            // ...
-            // console.log(req.query)
-        }).catch(console.error);
         const options = {
             page: req.query.page,
             limit: req.query.rowsPerPage,
@@ -345,7 +340,7 @@ module.exports = {
             //console.log("Documento", document)
             res.json("guardó");
         } catch (e) {
-            console.log("ERROR",req.body)
+            console.log("ERROR",req.body) 
             console.log(e)
             e.status = 400
             next(e)

@@ -2,7 +2,9 @@ const usersModel = require("../models/usersModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const CONFIG = require("../config/config");
-const parteColumns = require("../util/parteColumns");
+const parteColumns = require("../util/columns/partes");
+const remitoColumns = require("../util/columns/remitos");
+const certificacionColumns = require("../util/columns/certificaciones");
 //const multer = require('multer');
 //const upload =multer({dest: 'uploads/'});
 
@@ -24,9 +26,9 @@ module.exports = {
             const documents = await usersModel.aggregate([
                 { $match: { deleted: false } },
                 {
-                    $addFields:{
-                        nombre_completo: {$concat:["$nombre"," ","$apellido"]}
-                       
+                    $addFields: {
+                        nombre_completo: { $concat: ["$nombre", " ", "$apellido"] }
+
                     }
                 },
                 {
@@ -103,6 +105,8 @@ module.exports = {
                 deleted: req.body.deleted,
                 policy: req.body.policy,
                 parteColumns: parteColumns.parteColumns,
+                remitoColumns: remitosColumn.remitosColumn,
+                certificacioneColumn: certificacionesColumn.certificacionesColumn
             })
             const document = await user.save()
             console.log("se creó", document)
@@ -153,9 +157,30 @@ module.exports = {
                 active: req.body.active,
                 deleted: req.body.deleted,
                 parteColumns: req.body.parteColumns,
+                remitoColumns: req.body.remitoColumns,
+                certificacionColumns: req.body.certificacionColumns,
                 password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined
             }
             const document = await usersModel.findByIdAndUpdate(req.params.id, user, { new: true })
+            console.log("se actualizó", document)
+            res.status(201).json(document);
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+
+    update: async function (req, res, next) {
+        console.log(req.params.id)
+        try {
+            const user = {
+                parteColumns: parteColumns.parteColumns,
+                remitoColumns: remitoColumns.remitoColumns,
+                certificacionColumns: certificacionColumns.certificacionColumns
+            }
+            const document = await usersModel.updateMany({}, user)
             console.log("se actualizó", document)
             res.status(201).json(document);
         } catch (e) {
