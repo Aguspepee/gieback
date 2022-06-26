@@ -10,6 +10,8 @@ module.exports = {
         };
         var sort = {};
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
+        console.log(sort)
+        console.log(options)
         try {
             const documents = await partesModel.aggregate([
                 {
@@ -48,16 +50,31 @@ module.exports = {
                         certificado_realizado_fecha: { $first: "$certificado_realizado_fecha" },
                         certificado_finalizado: { $first: "$certificado_finalizado" },
                         certificado_finalizado_Fecha: { $first: "$certificado_finalizado_fecha" },
-
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "contracts",
+                        localField: "contrato",
+                        foreignField: "_id",
+                        as: "contrato"
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "users",
+                        localField: "operador",
+                        foreignField: "_id",
+                        as: "operador"
                     }
                 },
                 {
                     $match: { '_id': { "$ne": null } }
                 },
                 {
-                    '$sort': {
-                        '_id': 1
-                    }
+                    "$sort": sort
                 },
             ]).paginateExec(options)
             res.json(documents)

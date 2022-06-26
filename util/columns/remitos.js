@@ -23,18 +23,18 @@ module.exports = {
             "search": null
         },
         {
-            "id": "contrato",
+            "id": "contrato[0].nombre",
             "numeric": false,
-            "disablePadding": true,
+            "disablePadding": false,
             "label": "Contrato",
-            "width": 10,
+            "width": 160,
             "show": true,
-            "placeHolder": "#",
-            "type": "text",//text, number, date, select, none
-            "search": null
+            "placeHolder": "-",
+            "type": "text",
+            "search":null
         },
         {
-            "id": "operador",
+            "id": "operador[0].nombre",
             "numeric": false,
             "disablePadding": true,
             "label": "operador",
