@@ -29,7 +29,7 @@ app.use(cors())
 
 //Setea la ubicación de las imagenes
 app.use('/clients-images', express.static(path.join(__dirname + '/clients-images/')));
-app.use('/users-images', express.static(path.join(__dirname + './users-images')));
+app.use('/users-images', express.static(path.join(__dirname + '/users-images')));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
