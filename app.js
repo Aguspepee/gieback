@@ -16,7 +16,7 @@ const contractsRouter = require('./routes/contractsRouter');
 const clientsRouter = require('./routes/clientsRouter');
 const partesRouter = require('./routes/partesRouter');
 const remitosRouter = require('./routes/remitosRouter');
-const certificacionesRouter = require('./routes/certificacionesRouter');
+const certificadosRouter = require('./routes/certificadosRouter');
 const settingsRouter = require('./routes/settingsRouter');
 
 var app = express();
@@ -50,7 +50,7 @@ app.use('/contracts', contractsRouter);
 app.use('/clients/', clientsRouter);
 app.use('/partes/', partesRouter);
 app.use('/remitos/', remitosRouter);
-app.use('/certificaciones/', certificacionesRouter);
+app.use('/certificados/', certificadosRouter);
 app.use('/settings/', settingsRouter);
 
 // catch 404 and forward to error handler

@@ -7,3 +7,4 @@ const remitosController = require("../controllers/remitosController.js")
 router.get('/', remitosController.getAll);
 
 module.exports = router;
+ 

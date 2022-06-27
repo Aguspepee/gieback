@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const CONFIG = require("../config/config");
 const parteColumns = require("../util/columns/partes");
 const remitoColumns = require("../util/columns/remitos");
-const certificacionColumns = require("../util/columns/certificaciones");
+const certificadoColumns = require("../util/columns/certificados");
 //const multer = require('multer');
 //const upload =multer({dest: 'uploads/'});
 
@@ -106,7 +106,7 @@ module.exports = {
                 policy: req.body.policy,
                 parteColumns: parteColumns.parteColumns,
                 remitoColumns: remitosColumn.remitosColumn,
-                certificacioneColumn: certificacionesColumn.certificacionesColumn
+                certificadoeColumn: certificadosColumn.certificadosColumn
             })
             const document = await user.save()
             console.log("se creó", document)
@@ -158,7 +158,7 @@ module.exports = {
                 deleted: req.body.deleted,
                 parteColumns: req.body.parteColumns,
                 remitoColumns: req.body.remitoColumns,
-                certificacionColumns: req.body.certificacionColumns,
+                certificadoColumns: req.body.certificadoColumns,
                 password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined
             }
             const document = await usersModel.findByIdAndUpdate(req.params.id, user, { new: true })
@@ -178,7 +178,7 @@ module.exports = {
             const user = {
                 parteColumns: parteColumns.parteColumns,
                 remitoColumns: remitoColumns.remitoColumns,
-                certificacionColumns: certificacionColumns.certificacionColumns
+                certificadoColumns: certificadoColumns.certificadoColumns
             }
             const document = await usersModel.updateMany({}, user)
             console.log("se actualizó", document)

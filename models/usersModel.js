@@ -99,7 +99,7 @@ const usersShema = mongoose.Schema({
     },
     parteColumns: [columnsShema],
     remitoColumns: [columnsShema],
-    certificacionColumns: [columnsShema],
+    certificadoColumns: [columnsShema],
     image: {
         type: String,
     },

@@ -1,8 +1,6 @@
 const partesModel = require("../models/partesModel")
 
-
 module.exports = {
-
     getAll: async function (req, res, next) {
         const options = {
             page: req.query.page,
@@ -21,14 +19,16 @@ module.exports = {
                 },
                 {
                     '$group': {
-                        _id: "$remito_numero",
-                        remito_numero: { $first: "$remito_numero" },
+                        _id: "$certificado_numero",
+                        certificado_numero: { $first: "$certificado_numero" },
                         items: {
                             $push: {
                                 id: "$_id",
                                 cantidad: "$items.cantidad",
                                 codigo: "$items.codigo_servicio",
                                 detalle: "$items.descripcion_servicio",
+                                valor_unitario: "$items.valor_unitario",
+                                valor_total: "$items.valor_total",
                                 equipo: "$tag",
                                 fecha_inspeccion: "$fecha_inspeccion",
                                 fecha_informe: "$fecha_informe",
@@ -39,12 +39,6 @@ module.exports = {
                         operador: { $first: "$operador" },
                         planta: { $first: "$unidad" },
                         fecha: { $first: "$remito_realizado_fecha" },
-                        remito_revisado: { $first: "$remito_revisado" },
-                        remito_revisado_fecha: { $first: "$remito_revisado_fecha" },
-                        remito_entregado: { $first: "$remito_entregado" },
-                        remito_entregado_fecha: { $first: "$remito_entregado_fecha" },
-                        remito_firmado: { $first: "$remito_firmado" },
-                        remito_firmado_fecha: { $first: "$remito_firmado_fecha" },
                         certificado_numero: { $first: "$certificado_numero" },
                         certificado_realizado: { $first: "$certificado_realizado" },
                         certificado_realizado_fecha: { $first: "$certificado_realizado_fecha" },
@@ -60,7 +54,7 @@ module.exports = {
                         foreignField: "_id",
                         as: "contrato"
                     }
-                }, 
+                },
                 {
                     $lookup:
                     {
