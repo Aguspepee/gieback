@@ -7,3 +7,4 @@ const certificadosController = require("../controllers/certificadosController.js
 router.get('/', certificadosController.getAll);
 
 module.exports = router;
+ 
