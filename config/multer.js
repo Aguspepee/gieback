@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + file.originalname)
-        //console.log(file.originalname.split("-"))
+        console.log("Error en Multer filename")
         //cb(null, `${Date().now}.${file.originalname.split(".")[1]}`)
     }
 })
@@ -16,6 +16,7 @@ const fileFilter = (req, file, cb) => {
         cb(null, true);
     } else {
         cb(new Error('La extensión no es correcta'), false);
+        console.log("Error en Multer")
     }
 }
 

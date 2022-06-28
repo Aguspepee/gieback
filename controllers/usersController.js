@@ -5,8 +5,6 @@ const CONFIG = require("../config/config");
 const parteColumns = require("../util/columns/partes");
 const remitoColumns = require("../util/columns/remitos");
 const certificadoColumns = require("../util/columns/certificados");
-//const multer = require('multer');
-//const upload =multer({dest: 'uploads/'});
 
 module.exports = {
     getAll: async function (req, res, next) {
@@ -91,7 +89,7 @@ module.exports = {
     },
 
     register: async function (req, res, next) {
-        console.log(req.file)
+        //console.log(req.file)
         try {
             const user = new usersModel({
                 nombre: req.body.nombre,
@@ -145,7 +143,7 @@ module.exports = {
     },
 
     edit: async function (req, res, next) {
-        console.log(req.params.id)
+        //console.log(req.params.id)
         try {
             const user = {
                 nombre: req.body.nombre,
@@ -162,7 +160,7 @@ module.exports = {
                 password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined
             }
             const document = await usersModel.findByIdAndUpdate(req.params.id, user, { new: true })
-            console.log("se actualizó", document)
+            //console.log("se actualizó", document)
             res.status(201).json(document);
         } catch (e) {
             console.log(e)
@@ -173,7 +171,7 @@ module.exports = {
 
 
     update: async function (req, res, next) {
-        console.log(req.params.id)
+        //console.log(req.params.id)
         try {
             const user = {
                 parteColumns: parteColumns.parteColumns,
