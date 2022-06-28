@@ -9,7 +9,6 @@ var cors = require('cors')
 
 var AuthToken = require("./middlewares/authToken")
 
-
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/usersRouter');
 const contractsRouter = require('./routes/contractsRouter');

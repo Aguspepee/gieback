@@ -32,7 +32,9 @@ module.exports = {
                                 equipo: "$tag",
                                 fecha_inspeccion: "$fecha_inspeccion",
                                 fecha_informe: "$fecha_informe",
-                                OT: "$numero_orden"
+                                OT: "$numero_orden",
+                                numero_remito: "$remito_numero",
+                                remito_fecha: "$remito_realizado_fecha"
                             }
                         },
                         contrato: { $first: "$contrato" },
