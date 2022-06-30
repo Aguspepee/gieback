@@ -1,0 +1,14 @@
+const mongoose = require("../bin/mongodb")
+const errorMessage = require("../util/errorMessage")
+var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
+
+
+
+//Contador Certificados
+var CounterCertificadosSchema = mongoose.Schema(
+    {
+        _id: { type: String, required: true },
+        sequence_value: { type: Number, default: 1 }
+    }
+);
+module.exports = mongoose.model('CounterCertificados', CounterCertificadosSchema);

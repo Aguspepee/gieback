@@ -6,5 +6,7 @@ const certificadosController = require("../controllers/certificadosController.js
 /* GET */
 router.get('/', certificadosController.getAll);
 
+router.put('/:selected', certificadosController.create);
+
 module.exports = router;
  

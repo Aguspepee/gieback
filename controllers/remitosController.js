@@ -1,5 +1,5 @@
 const partesModel = require("../models/partesModel")
-
+const remitosCounterModel = require("../models/remitosModel")
 
 module.exports = {
 
@@ -60,7 +60,7 @@ module.exports = {
                         foreignField: "_id",
                         as: "contrato"
                     }
-                }, 
+                },
                 {
                     $lookup:
                     {
@@ -78,6 +78,49 @@ module.exports = {
                 },
             ]).paginateExec(options)
             res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+
+    create: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        console.log("entro", selected)
+        try {
+            //Busca el número del remito que va a hacer y le agrega 1
+            remitosCounterModel.findByIdAndUpdate(
+                'productId',
+                { $inc: { sequence_value: 1 } },
+                { new: true, upsert: true },
+                //En la función de callback, una vez que hace la actualización del número en el contador
+                //ejecuta la actualización del numero y las fechas en el modelo. 
+                //Tiene que ser si o si una fución async
+                async function (err, seq) {
+                    if (err) return next(err);
+                    console.log("remito", seq.sequence_value)
+                    await partesModel.updateMany({ '_id': { '$in': selected } }, {
+                        remito_numero: seq.sequence_value,
+                        remito_realizado: true,
+                        remito_realizado_fecha: Date(),
+                    })
+                    res.status(201).json("document")
+                }
+            );
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    number: async function (req, res, next) {
+        try {
+            //Busca el número del remito que va a hacer y le agrega 1
+           const number = await remitosCounterModel.find({_id:'productId'});
+           res.status(201).json({remito_numero:number[0].sequence_value})
         } catch (e) {
             console.log(e)
             e.status = 400

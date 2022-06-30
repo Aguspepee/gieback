@@ -1,4 +1,5 @@
 const partesModel = require("../models/partesModel")
+const certificadosCounterModel = require("../models/certificadosModel")
 
 module.exports = {
     getAll: async function (req, res, next) {
@@ -74,6 +75,36 @@ module.exports = {
                 },
             ]).paginateExec(options)
             res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    create: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        console.log("entro", selected)
+        try {
+            //Busca el número del certificado que va a hacer y le agrega 1
+            certificadosCounterModel.findByIdAndUpdate(
+                'productId',
+                { $inc: { sequence_value: 1 } },
+                { new: true, upsert: true },
+                //En la función de callback, una vez que hace la actualización del número en el contador
+                //ejecuta la actualización del numero y las fechas en el modelo. 
+                //Tiene que ser si o si una fución async
+                async function (err, seq) {
+                    if (err) return next(err);
+                    console.log("certificado", seq.sequence_value)
+                    await partesModel.updateMany({ 'remito_numero': { '$in': selected } }, {
+                        certificado_numero: seq.sequence_value,
+                        certificado_realizado: true,
+                        certificado_realizado_fecha: Date(),
+                    })
+                    res.status(201).json("document")
+                }
+            );
         } catch (e) {
             console.log(e)
             e.status = 400

@@ -2,7 +2,7 @@ const mongoose = require("../bin/mongodb")
 const errorMessage = require("../util/errorMessage")
 var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
-
+//Contador Partes
 var CounterPartesSchema = mongoose.Schema(
     {
         _id: { type: String, required: true },
@@ -10,7 +10,6 @@ var CounterPartesSchema = mongoose.Schema(
     }
 );
 var CounterPartes = mongoose.model('CounterPartes', CounterPartesSchema);
-
 
 
 //Se declaran los subSchema
