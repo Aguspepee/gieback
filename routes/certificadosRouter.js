@@ -8,5 +8,7 @@ router.get('/', certificadosController.getAll);
 
 router.put('/:selected', certificadosController.create);
 
+router.delete('/:selected', certificadosController.delete);
+
 module.exports = router;
  

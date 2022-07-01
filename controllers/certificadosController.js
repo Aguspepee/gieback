@@ -111,4 +111,24 @@ module.exports = {
             next(e)
         }
     },
+
+    delete: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        try {
+            const documents = await partesModel.updateMany(
+                { 'certificado_numero': { '$in': selected } },
+                {
+                    certificado_finalizado: false,
+                    certificado_finalizado_Fecha: null,
+                    certificado_numero: null,
+                    certificado_realizado: false,
+                    certificado_realizado_fecha: null,
+                })
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
 }

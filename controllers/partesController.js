@@ -78,13 +78,14 @@ module.exports = {
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
-/*                 {
-                    '$match': { remito_realizado: false }
-                },  */
+                /*                 {
+                                    '$match': { remito_realizado: false }
+                                },  */
 
                 {
                     $addFields: {
                         Id_str: { $toString: "$Id" },
+                        remito_numero_str: { $toString: "$remito_numero" },
                         semana_carga: { $toString: { '$isoWeek': '$fecha_carga' } },
                         semana_inspeccion: { $toString: { '$isoWeek': '$fecha_inspeccion' } },
                         mes_inspeccion: { $toString: { '$month': '$fecha_inspeccion' } },
@@ -276,7 +277,7 @@ module.exports = {
             //console.log("Documento", document)
             res.json("guardó");
         } catch (e) {
-            console.log("ERROR",req.body)
+            console.log("ERROR", req.body)
             console.log(e)
             e.status = 400
             next(e)
@@ -340,7 +341,7 @@ module.exports = {
             //console.log("Documento", document)
             res.json("guardó");
         } catch (e) {
-            console.log("ERROR",req.body) 
+            console.log("ERROR", req.body)
             console.log(e)
             e.status = 400
             next(e)

@@ -119,8 +119,37 @@ module.exports = {
     number: async function (req, res, next) {
         try {
             //Busca el número del remito que va a hacer y le agrega 1
-           const number = await remitosCounterModel.find({_id:'productId'});
-           res.status(201).json({remito_numero:number[0].sequence_value})
+            const number = await remitosCounterModel.find({ _id: 'productId' });
+            res.status(201).json({ remito_numero: number[0].sequence_value })
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    delete: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        try {
+            const documents = await partesModel.updateMany(
+                { 'remito_numero': { '$in': selected } },
+                {
+                    remito_numero: null,
+                    remito_realizado: false,
+                    remito_realizado_fecha: null,
+                    remito_entregado: false,
+                    remito_entregado_fecha: null,
+                    remito_firmado: false,
+                    remito_firmado_fecha: null,
+                    remito_revisado: false,
+                    remito_revisado_fecha: null,
+                    certificado_finalizado: false,
+                    certificado_finalizado_Fecha: null,
+                    certificado_numero: null,
+                    certificado_realizado: false,
+                    certificado_realizado_fecha: null,
+                })
+            res.json(documents)
         } catch (e) {
             console.log(e)
             e.status = 400

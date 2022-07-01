@@ -9,4 +9,6 @@ router.get('/numero', remitosController.number);
 
 router.put('/:selected', remitosController.create);
 
+router.delete('/:selected', remitosController.delete);
+
 module.exports = router;
