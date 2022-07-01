@@ -128,6 +128,29 @@ module.exports = {
         }
     },
 
+    estado: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        console.log(selected)
+        console.log(req.body)
+        try {
+            const documents = await partesModel.updateMany(
+                { 'remito_numero': { '$in': selected } },
+                {
+                    remito_entregado: req.body.remito_entregado,
+                    remito_entregado_fecha: req.body.remito_entregado ? Date() : (req.body.remito_entregado === false ? null : undefined),
+                    remito_firmado: req.body.remito_firmado,
+                    remito_firmado_fecha: req.body.remito_firmado ? Date() : (req.body.remito_firmado === false ? null : undefined),
+                    remito_revisado: req.body.remito_revisado,
+                    remito_revisado_fecha: req.body.remito_revisado ? Date() : (req.body.remito_revisado === false ? null : undefined),
+                })
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     delete: async function (req, res, next) {
         const selected = req.params.selected.split(',')
         try {

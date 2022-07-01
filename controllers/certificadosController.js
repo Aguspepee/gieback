@@ -82,6 +82,18 @@ module.exports = {
         }
     },
 
+    number: async function (req, res, next) {
+        try {
+            //Busca el número del remito que va a hacer y le agrega 1
+            const number = await certificadosCounterModel.find({ _id: 'productId' });
+            res.status(201).json({ certificado_numero: number[0].sequence_value })
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     create: async function (req, res, next) {
         const selected = req.params.selected.split(',')
         console.log("entro", selected)

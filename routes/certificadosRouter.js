@@ -5,6 +5,7 @@ const certificadosController = require("../controllers/certificadosController.js
 
 /* GET */
 router.get('/', certificadosController.getAll);
+router.get('/numero', certificadosController.number);
 
 router.put('/:selected', certificadosController.create);
 

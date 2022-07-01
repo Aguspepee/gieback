@@ -8,6 +8,7 @@ router.get('/', remitosController.getAll);
 router.get('/numero', remitosController.number);
 
 router.put('/:selected', remitosController.create);
+router.put('/estado/:selected', remitosController.estado);
 
 router.delete('/:selected', remitosController.delete);
 
