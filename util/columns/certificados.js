@@ -1,17 +1,6 @@
 module.exports = {
     certificadoColumns: [
         {
-            "id": "_id",
-            "numeric": false,
-            "disablePadding": true,
-            "label": "Remito",
-            "width": 10,
-            "show": false,
-            "placeHolder": "#",
-            "type": "number",//text, number, date, select, none
-            "search": null
-        },
-        {
             "id": "certificado_numero",
             "numeric": false,
             "disablePadding": true,
@@ -56,32 +45,21 @@ module.exports = {
             "search": null
         },
         {
-            "id": "fecha",
+            "id": "certificante",
             "numeric": false,
             "disablePadding": true,
-            "label": "Fecha",
-            "width": 190,
-            "show": true,
-            "placeHolder": "#",
-            "type": "date",//text, number, date, select, none
-            "search": null
-        },
-        {
-            "id": "certificado_realizado",
-            "numeric": false,
-            "disablePadding": true,
-            "label": "Certificado Realizado",
-            "width": 10,
-            "show": true,
-            "placeHolder": "#",
-            "type": "select",//text, number, date, select, none
+            "label": "Certificante",
+            "width": 200,
+            "show": false,
+            "placeHolder": "-",
+            "type": "text",//text, number, date, select, none
             "search": null
         },
         {
             "id": "certificado_realizado_fecha",
             "numeric": false,
             "disablePadding": true,
-            "label": "Certificado Realizado Fecha",
+            "label": "Fecha",
             "width": 190,
             "show": true,
             "placeHolder": "#",

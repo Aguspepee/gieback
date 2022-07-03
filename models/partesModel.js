@@ -33,6 +33,7 @@ const detallesSchema = mongoose.Schema({
     },
     tipo: {
         type: String,
+        default: ""
     },
 })
 
@@ -40,16 +41,20 @@ const detallesSchema = mongoose.Schema({
 const itemsSchema = mongoose.Schema({
     descripcion_servicio: {
         type: String,
+        default: ""
         //index: true
     },
     codigo_servicio: {
         type: String,
+        default: ""
     },
     tipo_actividad: {
         type: String,
+        default: ""
     },
     clase: { //gamagrafía o inspección
         type: String,
+        default: ""
     },
     cantidad: {
         type: Number,
@@ -57,6 +62,7 @@ const itemsSchema = mongoose.Schema({
     },
     unidad_medida: {
         type: String,
+        default: ""
     },
     valor_unitario: {
         type: Number,
@@ -96,10 +102,9 @@ const partesSchema = mongoose.Schema({
         default: ""
     },
     unidad: {
-        type: String
+        type: String,
+        default: ""
     },
-
-    //DATOS QUE SALEN DEL CONTRATO
     contrato: {
         type: mongoose.Schema.ObjectId,
         ref: "contracts"
@@ -111,7 +116,7 @@ const partesSchema = mongoose.Schema({
     },
     fecha_inspeccion: {
         type: Date,
-        required: [true, errorMessage.GENERAL.campo_obligatorio]
+        default:null
     },
     observaciones: {
         type: String,
@@ -201,9 +206,45 @@ const partesSchema = mongoose.Schema({
         type: Date,
         default: null
     },
-    certificado_certificante: {
+    certificante: {
         type: String,
+        default: ""
+    },
+
+
+
+    //PARO PARA PLANIFICACIÓN
+    fecha_planificacion_inicio: {
+        type: Date,
         default: null
+    },
+    fecha_planificacion_fin: {
+        type: Date,
+        default: null
+    },
+    descripcion_actividad: {
+        type: String,
+        default: ""
+    },
+    JN: {
+        type: String,
+        default: ""
+    },
+    clasificacion: {
+        type: String,
+        default: ""
+    },
+    tiempo_plan: {
+        type: Number,
+        default: 0
+    },
+    peso: {
+        type: Number,
+        default: 0
+    },
+    curva_S_plan: {
+        type: Number,
+        default: 0
     },
 
     //Varios

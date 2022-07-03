@@ -331,6 +331,17 @@ module.exports = {
             "search":null
         },
         {
+            "id": "certificante",
+            "numeric": false,
+            "disablePadding": true,
+            "label": "Certificante",
+            "width": 200,
+            "show": false,
+            "placeHolder": "-",
+            "type": "text",//text, number, date, select, none
+            "search": null
+        },
+        {
             "id": "items[0].codigo_servicio",
             "numeric": false,
             "disablePadding": false,

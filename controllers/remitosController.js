@@ -32,7 +32,8 @@ module.exports = {
                                 equipo: "$tag",
                                 fecha_inspeccion: "$fecha_inspeccion",
                                 fecha_informe: "$fecha_informe",
-                                OT: "$numero_orden"
+                                OT: "$numero_orden",
+                                clase: "$items.clase"
                             }
                         },
                         contrato: { $first: "$contrato" },
@@ -50,6 +51,7 @@ module.exports = {
                         certificado_realizado_fecha: { $first: "$certificado_realizado_fecha" },
                         certificado_finalizado: { $first: "$certificado_finalizado" },
                         certificado_finalizado_Fecha: { $first: "$certificado_finalizado_fecha" },
+                        certificante: { $first: "$certificante" },
                     }
                 },
                 {
@@ -81,12 +83,13 @@ module.exports = {
         } catch (e) {
             console.log(e)
             e.status = 400
-            next(e)
+            next(e) 
         }
     },
 
 
     create: async function (req, res, next) {
+        console.log(req.body.certificante)
         const selected = req.params.selected.split(',')
         console.log("entro", selected)
         try {
@@ -105,6 +108,7 @@ module.exports = {
                         remito_numero: seq.sequence_value,
                         remito_realizado: true,
                         remito_realizado_fecha: Date(),
+                        certificante: req.body.certificante
                     })
                     res.status(201).json("document")
                 }
@@ -171,6 +175,7 @@ module.exports = {
                     certificado_numero: null,
                     certificado_realizado: false,
                     certificado_realizado_fecha: null,
+                    certificante: ""
                 })
             res.json(documents)
         } catch (e) {

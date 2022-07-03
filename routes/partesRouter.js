@@ -13,10 +13,10 @@ router.post('/create', partesController.create);
 router.post('/masiva', partesController.masiva);
 
 router.put('/edit/:id', partesController.edit);
+router.put('/remitoDelete/:selected', partesController.remitoDelete);
+router.put('/certificadoDelete/:selected', partesController.certificadoDelete);
 
 router.delete('/:id', partesController.delete);
 router.delete('/many/:selected', partesController.deleteMany);
 
-
 module.exports = router;
-

@@ -89,8 +89,10 @@ module.exports = {
                         semana_carga: { $toString: { '$isoWeek': '$fecha_carga' } },
                         semana_inspeccion: { $toString: { '$isoWeek': '$fecha_inspeccion' } },
                         mes_inspeccion: { $toString: { '$month': '$fecha_inspeccion' } },
-                        AAsem_inspeccion: { $concat: [{ $toString: { $year: "$fecha_inspeccion" } }, "/", { $toString: { $isoWeek: "$fecha_inspeccion" } }] },
-                        AAMM_inspeccion: { $concat: [{ $toString: { $year: "$fecha_inspeccion" } }, "/", { $toString: { $month: "$fecha_inspeccion" } }] },
+                        //AAsem_inspeccion: { $concat: [{ $toString: { $year: "$fecha_inspeccion" } }, "/", { $toString: { $isoWeek: "$fecha_inspeccion" } }] },
+                        AAsem_inspeccion: { $concat: [{ $dateToString:{ format: "%Y",date:"$fecha_inspeccion"} } , "/", { $dateToString: { format:"%V",date: "$fecha_inspeccion" } }] },
+                        //AAMM_inspeccion: { $concat: [{ $toString: { $year: "$fecha_inspeccion" } }, "/", { $toString: { $month: "$fecha_inspeccion" } }] },
+                        AAMM_inspeccion: { $concat: [{ $dateToString:{ format: "%Y",date:"$fecha_inspeccion"} } , "/", { $dateToString: { format:"%m",date: "$fecha_inspeccion" } }] },
                         archivo: {
                             $concat: ["$unidad", "_", "$numero_reporte", "_",
                                 { $first: { $map: { input: "$items", as: "r", in: { $toString: "$$r.tipo_actividad" } } } }, "_", "$tag", "_",
@@ -124,11 +126,11 @@ module.exports = {
                              { "contrato": { $regex: req.query["contrato"] || "", $options: "i" } }, */
                             { "unidad": { $regex: req.query["unidad"] || "", $options: "i" } },
                             /* { "fecha_carga": { $regex: req.query["fecha_carga"] || "", $options: "i" } },*/
-                            { "semana_carga": { $regex: req.query["semana_carga"] || "", $options: "i" } },
+                        //    { "semana_carga": { $regex: req.query["semana_carga"] || "", $options: "i" } },
                             /* { "fecha_inspeccion": { $regex: req.query["fecha_inspeccion"] || "", $options: "i" } }, */
-                            { "AAMM_inspeccion": { $regex: req.query["AAMM_inspeccion"] || "", $options: "i" } },
-                            { "AAsem_inspeccion": { $regex: req.query["AAsem_inspeccion"] || "", $options: "i" } },
-                            { "semana_inspeccion": { $regex: req.query["semana_inspeccion"] || "", $options: "i" } },
+                        //    { "AAMM_inspeccion": { $regex: req.query["AAMM_inspeccion"] || "", $options: "i" } },
+                         //   { "AAsem_inspeccion": { $regex: req.query["AAsem_inspeccion"] || "", $options: "i" } },
+                        //    { "semana_inspeccion": { $regex: req.query["semana_inspeccion"] || "", $options: "i" } },
                             { "archivo": { $regex: req.query["archivo"] || "", $options: "i" } },
                             { "observaciones": { $regex: req.query["observaciones"] || "", $options: "i" } },
                             { "modificado_nombre": { $regex: req.query["modificado_nombre"] || "", $options: "i" } },
@@ -164,7 +166,7 @@ module.exports = {
                         as: "contrato"
                     }
                 },
-                { $unset: ['contrato.items.valor', 'contrato.certificantes', 'contrato.descripcion_servicio'] },
+                { $unset: ['contrato.items.valor', 'contrato.descripcion_servicio'] },
                 {
                     $lookup:
                     {
@@ -291,7 +293,7 @@ module.exports = {
             //console.log("Contrato", req.body.contrato)
             const contrato = await contractsModel.find({ _id: req.body.contrato })
             let items = req.body.items.map((item) => {
-                let item_contrato = (contrato[0].items.filter(items => items.codigo_servicio === item.codigo_servicio)[0]).toJSON()
+                let item_contrato = (contrato[0].items.filter(items => items.codigo_servicio === item.codigo_servicio.toString())[0]).toJSON()
                 item_contrato.cantidad = item.cantidad
                 return (item_contrato)
             })
@@ -334,8 +336,17 @@ module.exports = {
                 trabajo_terminado_fecha: req.body.trabajo_terminado === true ? new Date() : null,
                 informe_realizado: req.body.informe_realizado,
                 informe_realizado_fecha: req.body.informe_realizado === true ? new Date() : null,
+                observaciones: req.body.observaciones,
 
-                observaciones: req.body.observaciones
+                //Nuevos Campos Paro de Planta
+                fecha_planificacion_inicio: req.body.fecha_planificacion_inicio,
+                fecha_planificacion_fin: req.body.fecha_planificacion_fin,
+                descripcion_actividad: req.body.descripcion_actividad,
+                JN: req.body.JN,
+                clasificacion: req.body.clasificacion,
+                tiempo_plan:req.body.tiempo_plan,
+                peso: req.body.peso,
+                curva_S_plan: req.body.curva_S_plan
             })
             const document = await parte.save().then()
             //console.log("Documento", document)
@@ -403,6 +414,7 @@ module.exports = {
                 informe_revisado: req.body.informe_revisado,
                 informe_revisado_fecha: req.body.informe_revisado ? Date() : (req.body.informe_revisado === false ? null : undefined),
                 remito_realizado: req.body.remito_realizado,
+                remito_numero: req.body.remito_realizado ? 1234 : (req.body.remito_realizado === false ? null : undefined),
                 remito_realizado_fecha: req.body.remito_realizado ? Date() : (req.body.remito_realizado === false ? null : undefined),
                 certificado_realizado: req.body.certificado_realizado,
                 certificado_realizado_fecha: req.body.certificado_realizado ? Date() : (req.body.certificado_realizado === false ? null : undefined),
@@ -413,6 +425,55 @@ module.exports = {
             const document = await partesModel.findByIdAndUpdate(req.params.id, parte, { new: true })
             console.log("se actualizó", document)
             res.status(201).json(document);
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    remitoDelete: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        try {
+            const documents = await partesModel.findByIdAndUpdate(
+                selected,
+                {
+                    remito_numero: null,
+                    remito_realizado: false,
+                    remito_realizado_fecha: null,
+                    remito_entregado: false,
+                    remito_entregado_fecha: null,
+                    remito_firmado: false,
+                    remito_firmado_fecha: null,
+                    remito_revisado: false,
+                    remito_revisado_fecha: null,
+                    certificado_finalizado: false,
+                    certificado_finalizado_Fecha: null,
+                    certificado_numero: null,
+                    certificado_realizado: false,
+                    certificado_realizado_fecha: null,
+                })
+            res.json(documents)
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    certificadoDelete: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        try {
+            const documents = await partesModel.findByIdAndUpdate(
+                selected,
+                {
+                    certificado_finalizado: false,
+                    certificado_finalizado_Fecha: null,
+                    certificado_numero: null,
+                    certificado_realizado: false,
+                    certificado_realizado_fecha: null,
+                })
+            res.json(documents)
         } catch (e) {
             console.log(e)
             e.status = 400

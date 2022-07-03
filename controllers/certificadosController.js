@@ -34,8 +34,10 @@ module.exports = {
                                 fecha_inspeccion: "$fecha_inspeccion",
                                 fecha_informe: "$fecha_informe",
                                 OT: "$numero_orden",
+                                certificante: "$certificante" ,
                                 numero_remito: "$remito_numero",
-                                remito_fecha: "$remito_realizado_fecha"
+                                remito_fecha: "$remito_realizado_fecha",
+                                clase: "$items.clase"
                             }
                         },
                         contrato: { $first: "$contrato" },
@@ -46,7 +48,8 @@ module.exports = {
                         certificado_realizado: { $first: "$certificado_realizado" },
                         certificado_realizado_fecha: { $first: "$certificado_realizado_fecha" },
                         certificado_finalizado: { $first: "$certificado_finalizado" },
-                        certificado_finalizado_Fecha: { $first: "$certificado_finalizado_fecha" },
+                        certificado_finalizado_fecha: { $first: "$certificado_finalizado_fecha" },
+                        
                     }
                 },
                 {
@@ -115,8 +118,27 @@ module.exports = {
                         certificado_realizado_fecha: Date(),
                     })
                     res.status(201).json("document")
-                }
+                } 
             );
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
+    estado: async function (req, res, next) {
+        const selected = req.params.selected.split(',')
+        console.log(selected)
+        console.log(req.body)
+        try {
+            const documents = await partesModel.updateMany(
+                { 'certificado_numero': { '$in': selected } },
+                {
+                    certificado_finalizado: req.body.certificado_finalizado,
+                    certificado_finalizado_fecha: req.body.certificado_finalizado ? Date() : (req.body.certificado_finalizado === false ? null : undefined),
+                })
+            res.json(documents)
         } catch (e) {
             console.log(e)
             e.status = 400
@@ -131,7 +153,7 @@ module.exports = {
                 { 'certificado_numero': { '$in': selected } },
                 {
                     certificado_finalizado: false,
-                    certificado_finalizado_Fecha: null,
+                    certificado_finalizado_fecha: null,
                     certificado_numero: null,
                     certificado_realizado: false,
                     certificado_realizado_fecha: null,

@@ -1,17 +1,6 @@
 module.exports = {
     remitoColumns: [
         {
-            "id": "_id",
-            "numeric": false,
-            "disablePadding": true,
-            "label": "Remito",
-            "width": 10,
-            "show": false,
-            "placeHolder": "#",
-            "type": "number",//text, number, date, select, none
-            "search": null
-        },
-        {
             "id": "remito_numero",
             "numeric": false,
             "disablePadding": true,
@@ -39,7 +28,7 @@ module.exports = {
             "disablePadding": true,
             "label": "operador",
             "width": 10,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "text",//text, number, date, select, none
             "search": null
@@ -83,12 +72,11 @@ module.exports = {
             "disablePadding": true,
             "label": "Remito Revisado Fecha",
             "width": 190,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "date",//text, number, date, select, none
             "search": null
         },
-
         {
             "id": "remito_entregado",
             "numeric": false,
@@ -106,7 +94,7 @@ module.exports = {
             "disablePadding": true,
             "label": "Remito Entregado Fecha",
             "width": 190,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "date",//text, number, date, select, none
             "search": null
@@ -128,20 +116,20 @@ module.exports = {
             "disablePadding": true,
             "label": "Remito Firmado Fecha",
             "width": 190,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "date",//text, number, date, select, none
             "search": null
         },
         {
-            "id": "certificado_numero",
-            "numeric": true,
+            "id": "certificante",
+            "numeric": false,
             "disablePadding": true,
-            "label": "Certificado Número",
-            "width": 10,
-            "show": true,
-            "placeHolder": "#",
-            "type": "number",//text, number, date, select, none
+            "label": "Certificante",
+            "width": 200,
+            "show": false,
+            "placeHolder": "-",
+            "type": "text",//text, number, date, select, none
             "search": null
         },
         {
@@ -161,9 +149,20 @@ module.exports = {
             "disablePadding": true,
             "label": "Certificado Realizado Fecha",
             "width": 190,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "date",//text, number, date, select, none
+            "search": null
+        },
+        {
+            "id": "certificado_numero",
+            "numeric": true,
+            "disablePadding": true,
+            "label": "Certificado Número",
+            "width": 10,
+            "show": true,
+            "placeHolder": "#",
+            "type": "number",//text, number, date, select, none
             "search": null
         },
         {
@@ -172,7 +171,7 @@ module.exports = {
             "disablePadding": true,
             "label": "Certificado Finalizado",
             "width": 10,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "select",//text, number, date, select, none
             "search": null
@@ -183,7 +182,7 @@ module.exports = {
             "disablePadding": true,
             "label": "Certificado Finalizado Fecha",
             "width": 190,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "date",//text, number, date, select, none
             "search": null
