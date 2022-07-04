@@ -1,6 +1,5 @@
 const multer = require('multer');
 
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, `./${req.params.collection}-images/`)
@@ -8,7 +7,6 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         cb(null, Date.now() + file.originalname)
         console.log("Error en Multer filename")
-        //cb(null, `${Date().now}.${file.originalname.split(".")[1]}`)
     }
 })
 
