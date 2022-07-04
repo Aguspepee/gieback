@@ -81,7 +81,9 @@ module.exports = {
                 /*                 {
                                     '$match': { remito_realizado: false }
                                 },  */
-
+                //Matchea los operadores por ID. Es un prefiltro. Al final se vuelve a realizar el filtro con el nombre, 
+                //en el caso de que no se envíe el ID.
+                req.query["operador"] === undefined ? { '$match': {} } : { '$match': { operador: ObjectId(req.query.operador) } },
                 {
                     $addFields: {
                         Id_str: { $toString: "$Id" },
@@ -90,9 +92,9 @@ module.exports = {
                         semana_inspeccion: { $toString: { '$isoWeek': '$fecha_inspeccion' } },
                         mes_inspeccion: { $toString: { '$month': '$fecha_inspeccion' } },
                         //AAsem_inspeccion: { $concat: [{ $toString: { $year: "$fecha_inspeccion" } }, "/", { $toString: { $isoWeek: "$fecha_inspeccion" } }] },
-                        AAsem_inspeccion: { $concat: [{ $dateToString:{ format: "%Y",date:"$fecha_inspeccion"} } , "/", { $dateToString: { format:"%V",date: "$fecha_inspeccion" } }] },
+                        AAsem_inspeccion: { $concat: [{ $dateToString: { format: "%Y", date: "$fecha_inspeccion" } }, "/", { $dateToString: { format: "%V", date: "$fecha_inspeccion" } }] },
                         //AAMM_inspeccion: { $concat: [{ $toString: { $year: "$fecha_inspeccion" } }, "/", { $toString: { $month: "$fecha_inspeccion" } }] },
-                        AAMM_inspeccion: { $concat: [{ $dateToString:{ format: "%Y",date:"$fecha_inspeccion"} } , "/", { $dateToString: { format:"%m",date: "$fecha_inspeccion" } }] },
+                        AAMM_inspeccion: { $concat: [{ $dateToString: { format: "%Y", date: "$fecha_inspeccion" } }, "/", { $dateToString: { format: "%m", date: "$fecha_inspeccion" } }] },
                         archivo: {
                             $concat: ["$unidad", "_", "$numero_reporte", "_",
                                 { $first: { $map: { input: "$items", as: "r", in: { $toString: "$$r.tipo_actividad" } } } }, "_", "$tag", "_",
@@ -126,11 +128,11 @@ module.exports = {
                              { "contrato": { $regex: req.query["contrato"] || "", $options: "i" } }, */
                             { "unidad": { $regex: req.query["unidad"] || "", $options: "i" } },
                             /* { "fecha_carga": { $regex: req.query["fecha_carga"] || "", $options: "i" } },*/
-                        //    { "semana_carga": { $regex: req.query["semana_carga"] || "", $options: "i" } },
+                            //    { "semana_carga": { $regex: req.query["semana_carga"] || "", $options: "i" } },
                             /* { "fecha_inspeccion": { $regex: req.query["fecha_inspeccion"] || "", $options: "i" } }, */
-                        //    { "AAMM_inspeccion": { $regex: req.query["AAMM_inspeccion"] || "", $options: "i" } },
-                         //   { "AAsem_inspeccion": { $regex: req.query["AAsem_inspeccion"] || "", $options: "i" } },
-                        //    { "semana_inspeccion": { $regex: req.query["semana_inspeccion"] || "", $options: "i" } },
+                            //    { "AAMM_inspeccion": { $regex: req.query["AAMM_inspeccion"] || "", $options: "i" } },
+                            //   { "AAsem_inspeccion": { $regex: req.query["AAsem_inspeccion"] || "", $options: "i" } },
+                            //    { "semana_inspeccion": { $regex: req.query["semana_inspeccion"] || "", $options: "i" } },
                             { "archivo": { $regex: req.query["archivo"] || "", $options: "i" } },
                             { "observaciones": { $regex: req.query["observaciones"] || "", $options: "i" } },
                             { "modificado_nombre": { $regex: req.query["modificado_nombre"] || "", $options: "i" } },
@@ -344,7 +346,7 @@ module.exports = {
                 descripcion_actividad: req.body.descripcion_actividad,
                 JN: req.body.JN,
                 clasificacion: req.body.clasificacion,
-                tiempo_plan:req.body.tiempo_plan,
+                tiempo_plan: req.body.tiempo_plan,
                 peso: req.body.peso,
                 curva_S_plan: req.body.curva_S_plan
             })

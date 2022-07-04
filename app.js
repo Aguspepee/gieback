@@ -17,6 +17,7 @@ const partesRouter = require('./routes/partesRouter');
 const remitosRouter = require('./routes/remitosRouter');
 const certificadosRouter = require('./routes/certificadosRouter');
 const settingsRouter = require('./routes/settingsRouter');
+const inicioRouter = require('./routes/inicioRouter');
 
 var app = express();
 
@@ -51,6 +52,7 @@ app.use('/partes/', partesRouter);
 app.use('/remitos/', remitosRouter);
 app.use('/certificados/', certificadosRouter);
 app.use('/settings/', settingsRouter);
+app.use('/inicio/', inicioRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
