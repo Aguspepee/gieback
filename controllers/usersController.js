@@ -76,7 +76,7 @@ module.exports = {
                 return res.json({ error: true, message: "Email incorrecto" })
             }
             if (bcrypt.compareSync(req.body.password, user.password)) {
-                const token = jwt.sign({ userId: user._id }, req.app.get("secretKey"), { expiresIn: "1h" })
+                const token = jwt.sign({ userId: user._id }, req.app.get("secretKey"), { expiresIn: "10h" })
                 return res.json({ error: false, message: "Se inició sesión", token: token, user: user })
             } else {
                 return res.json({ error: true, message: "Contraseña incorrecta" })
@@ -103,8 +103,8 @@ module.exports = {
                 deleted: req.body.deleted,
                 policy: req.body.policy,
                 parteColumns: parteColumns.parteColumns,
-                remitoColumns: remitosColumn.remitosColumn,
-                certificadoeColumn: certificadosColumn.certificadosColumn
+                remitoColumns: remitoColumns.remitoColumns,
+                certificadoColumns: certificadoColumns.certificadoColumns
             })
             const document = await user.save()
             console.log("se creó", document)

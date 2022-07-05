@@ -1,7 +1,4 @@
 const contractsModel = require("../models/contractsModel")
-const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
-const CONFIG = require("../config/config")
 var ObjectId = require('mongodb').ObjectID;
 
 module.exports = {
