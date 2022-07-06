@@ -195,6 +195,48 @@ module.exports = {
         {
           '$group': {
             '_id': '',
+            'partes_para_remitar': {
+              '$sum': {
+                '$cond': [
+                  {
+                    '$and': [
+                      {
+                        '$eq': [
+                          '$trabajo_terminado', true
+                        ]
+                      }, {
+                        '$eq': [
+                          '$informe_realizado', true
+                        ]
+                      }, {
+                        '$eq': [
+                          '$informe_revisado', true
+                        ]
+                      }, {
+                        '$eq': [
+                          '$remito_realizado', false
+                        ]
+                      }
+                    ]
+                  }, 1, 0
+                ]
+              }
+            },
+            'trabajos_sin_terminar': {
+              '$sum': {
+                '$cond': [
+                  {
+                    '$and': [
+                      {
+                        '$eq': [
+                          '$trabajo_terminado', false
+                        ]
+                      }
+                    ]
+                  }, 1, 0
+                ]
+              }
+            },
             'partes_sin_informe': {
               '$sum': {
                 '$cond': [
@@ -247,76 +289,75 @@ module.exports = {
   getIndicadoresInspector: async function (req, res, next) {
     try {
       const documents = await partesModel.aggregate([
-        [
-          {
-            '$match': {
-              'operador': ObjectId(req.params.id)
-            }
-          }, {
-            '$group': {
-              '_id': '$operador',
-              'inspecciones_realizadas': {
-                '$sum': {
-                  '$cond': [
-                    {}, 1, 0
-                  ]
-                }
-              },
-              'trabajos_no_terminados': {
-                '$sum': {
-                  '$cond': [
-                    {
-                      '$eq': [
-                        '$trabajo_terminado', false
-                      ]
-                    }, 1, 0
-                  ]
-                }
-              },
-              'informes_no_realizados': {
-                '$sum': {
-                  '$cond': [
-                    {
-                      '$eq': [
-                        '$informe_realizado', false
-                      ]
-                    }, 1, 0
-                  ]
-                }
-              }
-            }
-          }, {
-            '$addFields': {
-              'porcentaje_trabajos_no_terminados': {
-                '$round': [
-                  {
-                    '$multiply': [
-                      {
-                        '$divide': [
-                          '$trabajos_no_terminados', '$inspecciones_realizadas'
-                        ]
-                      }, 100
-                    ]
-                  }, 2
+        {
+          '$match': {
+            'operador': ObjectId(req.params.id)
+          }
+        }, {
+          '$group': {
+            '_id': '$operador',
+            'inspecciones_realizadas': {
+              '$sum': {
+                '$cond': [
+                  {}, 1, 0
                 ]
-              },
-              'porcentaje_informes_no_realizados': {
-                '$round': [
+              }
+            },
+            'trabajos_no_terminados': {
+              '$sum': {
+                '$cond': [
                   {
-                    '$multiply': [
+                    '$and': [
                       {
-                        '$divide': [
-                          '$informes_no_realizados', '$inspecciones_realizadas'
+                        '$eq': [
+                          '$trabajo_terminado', false
                         ]
-                      }, 100
+                      }
                     ]
-                  }, 2
+                  }, 1, 0
+                ]
+              }
+            },
+            'informes_no_realizados': {
+              '$sum': {
+                '$cond': [
+                  {
+                    '$and': [
+                      {
+                        '$eq': [
+                          '$trabajo_terminado', true
+                        ]
+                      }, {
+                        '$eq': [
+                          '$informe_realizado', false
+                        ]
+                      }
+                    ]
+                  }, 1, 0
+                ]
+              }
+            },
+            'informes_en_revision': {
+              '$sum': {
+                '$cond': [
+                  {
+                    '$and': [
+                      {
+                        '$eq': [
+                          '$trabajo_terminado', true
+                        ]
+                      }, {
+                        '$eq': [
+                          '$informe_realizado', true
+                        ]
+                      }
+                    ]
+                  }, 1, 0
                 ]
               }
             }
           }
-        ]
-
+        }
       ])
       res.json(documents)
     } catch (e) {
@@ -331,29 +372,29 @@ module.exports = {
       const documents = await partesModel.aggregate([
         {
           '$group': {
-            '_id': '$remito_numero', 
+            '_id': '$remito_numero',
             'remito_realizado': {
               '$first': '$remito_realizado'
-            }, 
+            },
             'remito_revisado': {
               '$first': '$remito_revisado'
-            }, 
+            },
             'remito_entregado': {
               '$first': '$remito_entregado'
-            }, 
+            },
             'remito_firmado': {
               '$first': '$remito_firmado'
-            }, 
+            },
             'certificado_realizado': {
               '$first': '$certificado_realizado'
-            }, 
+            },
             'certificado_finalizado': {
               '$first': '$certificado_finalizado'
             }
           }
         }, {
           '$group': {
-            '_id': '', 
+            '_id': '',
             'remitos_pendiente_entrega': {
               '$sum': {
                 '$cond': [
@@ -376,7 +417,7 @@ module.exports = {
                   }, 1, 0
                 ]
               }
-            }, 
+            },
             'remitos_pendiente_firma': {
               '$sum': {
                 '$cond': [
@@ -399,7 +440,7 @@ module.exports = {
                   }, 1, 0
                 ]
               }
-            }, 
+            },
             'remitos_pendiente_certificado': {
               '$sum': {
                 '$cond': [
@@ -422,7 +463,7 @@ module.exports = {
                   }, 1, 0
                 ]
               }
-            }, 
+            },
             'certificado_realizado': {
               '$sum': {
                 '$cond': [
