@@ -73,6 +73,15 @@ module.exports = {
                     }
                 },
                 {
+                    $lookup:
+                    {
+                        from: "clients",
+                        localField: "contrato.0.cliente",
+                        foreignField: "_id",
+                        as: "cliente"
+                    }
+                },
+                {
                     $match: { '_id': { "$ne": null } }
                 },
                 {
