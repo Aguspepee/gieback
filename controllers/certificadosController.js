@@ -34,7 +34,7 @@ module.exports = {
                                 fecha_inspeccion: "$fecha_inspeccion",
                                 fecha_informe: "$fecha_informe",
                                 OT: "$numero_orden",
-                                certificante: "$certificante" ,
+                                certificante: "$certificante",
                                 numero_remito: "$remito_numero",
                                 remito_fecha: "$remito_realizado_fecha",
                                 clase: "$items.clase"
@@ -49,7 +49,7 @@ module.exports = {
                         certificado_realizado_fecha: { $first: "$certificado_realizado_fecha" },
                         certificado_finalizado: { $first: "$certificado_finalizado" },
                         certificado_finalizado_fecha: { $first: "$certificado_finalizado_fecha" },
-                        
+
                     }
                 },
                 {
@@ -118,7 +118,7 @@ module.exports = {
                         certificado_realizado_fecha: Date(),
                     })
                     res.status(201).json("document")
-                } 
+                }
             );
         } catch (e) {
             console.log(e)

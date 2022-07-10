@@ -177,6 +177,24 @@ module.exports = {
         }
     },
 
+    copy: async function (req, res, next) {
+        try {
+            const document = await contractsModel.findById(req.params.id)
+            document._id = undefined
+            document.version = document.version + 1
+            console.log("document", document)
+            const contract = new contractsModel(document)
+            contract.isNew = true;
+
+            const created = await contract.save()
+            res.status(201).json(created);
+        } catch (e) {
+            console.log(e)
+            e.status = 400
+            next(e)
+        }
+    },
+
     empty: async function (req, res, next) {
         console.log("entroooo")
         try {
@@ -184,7 +202,7 @@ module.exports = {
                 nombre: " ",
                 descripcion: " ",
                 area: " ",
-                cliente: " ",
+                cliente: undefined,
                 fecha_inicio: new Date(),
                 fecha_fin: new Date(),
                 activo: true,

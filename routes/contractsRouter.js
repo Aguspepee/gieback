@@ -15,6 +15,7 @@ router.post('/', contractsController.create);
 router.post('/empty', contractsController.empty); //Crea contrato vacio
 
 router.put('/edit/:id', contractsController.edit);
+router.put('/copy/:id', contractsController.copy);
 
 router.delete('/:id', contractsController.delete);
 

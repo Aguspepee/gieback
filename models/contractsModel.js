@@ -81,7 +81,6 @@ const itemsSchema = mongoose.Schema({
     tipo_actividad: {
         type: String,
         required: [true, errorMessage.GENERAL.campo_obligatorio],
-        minlength: [3, errorMessage.GENERAL.min_length]
     },
     clase: { //gamagrafía o inspección
         type: String,
@@ -111,7 +110,7 @@ const contractsShema = mongoose.Schema({
         required: [true, errorMessage.GENERAL.campo_obligatorio],
     },
     version: {
-        type: String,
+        type: Number,
         default:0
     },
     area: {
