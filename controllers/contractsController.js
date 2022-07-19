@@ -79,6 +79,13 @@ module.exports = {
         try {
             const documents = await contractsModel.aggregate([
                 {
+                    $match:
+                    {
+                        activo: true,
+                        deleted: false,
+                    }
+                },
+                {
                     $lookup:
                     {
                         from: "clients",

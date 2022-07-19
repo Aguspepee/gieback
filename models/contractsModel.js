@@ -61,7 +61,7 @@ const camposSchema = mongoose.Schema({
         default: false,
     },
     paga: { //está en RX
-        type: Boolean,
+        type: Boolean, 
         enum: [true, false],
         default: false,
     },
