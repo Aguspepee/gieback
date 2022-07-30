@@ -78,11 +78,10 @@ module.exports = {
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
         try {
             const documents = await partesModel.aggregate([
-                /*                 {
-                                    '$match': { remito_realizado: false }
-                                },  */
-                //Matchea los operadores por ID. Es un prefiltro. Al final se vuelve a realizar el filtro con el nombre, 
+                //Matchea los operadores y contratos por ID. Es un prefiltro. Al final se vuelve a realizar el filtro con el nombre, 
                 //en el caso de que no se envíe el ID.
+                req.query[" remito_realizado"] === undefined ? { '$match': {} } : { '$match': {  remito_realizado: req.body.remito_realizado } },
+                req.query["contrato"] === undefined ? { '$match': {} } : { '$match': { contrato: ObjectId(req.query.contrato) } },
                 req.query["operador"] === undefined ? { '$match': {} } : { '$match': { operador: ObjectId(req.query.operador) } },
                 {
                     $addFields: {
