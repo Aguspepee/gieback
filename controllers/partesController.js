@@ -263,6 +263,8 @@ module.exports = {
                 informe_realizado: req.body.informe_realizado,
                 operador: req.body.operador,
                 unidad: req.body.unidad,
+                certificante: req.body.certificante,
+                fecha_carga: new Date(),
                 fecha_inspeccion: req.body.fecha_inspeccion,
                 remito_realizado: req.body.remito_realizado,
                 remito_realizado_fecha: req.body.remito_realizado_fecha,
@@ -406,7 +408,7 @@ module.exports = {
                 fecha_inspeccion: data.fecha_inspeccion,
                 observaciones: data.observaciones,
                 detalles: data.detalles,
-
+                certificante: req.body.certificante,
 
                 //Pares BOOLEANO-FECHA
                 trabajo_terminado: req.body.trabajo_terminado,

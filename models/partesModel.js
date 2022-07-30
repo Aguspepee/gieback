@@ -112,7 +112,7 @@ const partesSchema = mongoose.Schema({
     items: [itemsSchema],
     fecha_carga: {
         type: Date,
-        default: new Date()
+        default: null
     },
     fecha_inspeccion: {
         type: Date,
@@ -276,7 +276,7 @@ const partesSchema = mongoose.Schema({
         ref: "clients",
         default: ""
     }
-})
+}, { timestamps: true })
 
 partesSchema.pre('save', function (next) {
     var doc = this;

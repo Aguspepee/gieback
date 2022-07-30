@@ -364,6 +364,17 @@ module.exports = {
             "search":null
         },
         {
+            "id": "certificante",
+            "numeric": false,
+            "disablePadding": false,
+            "label": "Certificante",
+            "width": 220,
+            "show": false,
+            "placeHolder": "-",
+            "type": "text",
+            "search":null
+        },
+        {
             "id": "observaciones",
             "numeric": false,
             "disablePadding": false,
