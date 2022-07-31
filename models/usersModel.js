@@ -41,6 +41,10 @@ const columnsShema = mongoose.Schema({
         type: String,
         default: null,
     },
+    disable: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 //USERS schema
@@ -88,6 +92,10 @@ const usersShema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    deleted_permanent: {
+        type: Boolean,
+        default: false
+    },
     policy: {
         type: Boolean,
         enum: [true, false],
@@ -103,6 +111,10 @@ const usersShema = mongoose.Schema({
     image: {
         type: String,
     },
+    search:{
+        type:Array,
+        default:[]
+    }
 })
 //creación model
 usersShema.pre("save", function (next) {

@@ -157,7 +157,8 @@ module.exports = {
                 parteColumns: req.body.parteColumns,
                 remitoColumns: req.body.remitoColumns,
                 certificadoColumns: req.body.certificadoColumns,
-                password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined
+                password: req.body.password ? bcrypt.hashSync(req.body.password, 10) : undefined,
+                search: req.body.search,
             }
             const document = await usersModel.findByIdAndUpdate(req.params.id, user, { new: true })
             //console.log("se actualizó", document)
@@ -176,7 +177,9 @@ module.exports = {
             const user = {
                 parteColumns: parteColumns.parteColumns,
                 remitoColumns: remitoColumns.remitoColumns,
-                certificadoColumns: certificadoColumns.certificadoColumns
+                certificadoColumns: certificadoColumns.certificadoColumns,
+                delete_permanent: false,
+                search: []
             }
             const document = await usersModel.updateMany({}, user)
             console.log("se actualizó", document)

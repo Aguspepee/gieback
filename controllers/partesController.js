@@ -80,7 +80,7 @@ module.exports = {
             const documents = await partesModel.aggregate([
                 //Matchea los operadores y contratos por ID. Es un prefiltro. Al final se vuelve a realizar el filtro con el nombre, 
                 //en el caso de que no se envíe el ID.
-                req.query[" remito_realizado"] === undefined ? { '$match': {} } : { '$match': {  remito_realizado: req.body.remito_realizado } },
+                req.query[" remito_realizado"] === undefined ? { '$match': {} } : { '$match': {  remito_realizado: req.query.remito_realizado } },
                 req.query["contrato"] === undefined ? { '$match': {} } : { '$match': { contrato: ObjectId(req.query.contrato) } },
                 req.query["operador"] === undefined ? { '$match': {} } : { '$match': { operador: ObjectId(req.query.operador) } },
                 {
