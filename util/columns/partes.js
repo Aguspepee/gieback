@@ -5,7 +5,7 @@ module.exports = {
             "numeric": false,
             "disablePadding": true,
             "label": "Id",
-            "width": 10,
+            "width": 90,
             "show": true,
             "placeHolder": "#",
             "type": "number",//text, number, date, select, none
@@ -54,7 +54,7 @@ module.exports = {
             "disablePadding": true,
             "label": "Descripción del Servicio",
             "width": 350,
-            "show": true,
+            "show": false,
             "placeHolder": "Servicio",
             "type": "text",
             "search": null,
@@ -64,9 +64,9 @@ module.exports = {
             "id": "items[0].cantidad",
             "numeric": true,
             "disablePadding": false,
-            "label": "Cantidad",
+            "label": "Cant.",
             "width": 60,
-            "show": true,
+            "show": false,
             "placeHolder": "#",
             "type": "text",
             "search": null,
@@ -285,7 +285,8 @@ module.exports = {
             "show": true,
             "placeHolder": "-",
             "type": "select",
-            "search": true
+            "search": null,
+            "disable": false,
         },
         {
             "id": "informe_revisado_fecha",
@@ -308,7 +309,8 @@ module.exports = {
             "show": true,
             "placeHolder": "-",
             "type": "select",
-            "search": false
+            "search": false,
+            "disable": false,
         },
         {
             "id": "remito_numero",

@@ -113,7 +113,7 @@ const usersShema = mongoose.Schema({
     },
     search:{
         type:Array,
-        default:[]
+        default:[{}]
     }
 })
 //creación model

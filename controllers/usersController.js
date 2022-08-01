@@ -179,7 +179,7 @@ module.exports = {
                 remitoColumns: remitoColumns.remitoColumns,
                 certificadoColumns: certificadoColumns.certificadoColumns,
                 delete_permanent: false,
-                search: []
+                search: [{}]
             }
             const document = await usersModel.updateMany({}, user)
             console.log("se actualizó", document)

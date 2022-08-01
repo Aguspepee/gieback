@@ -76,6 +76,7 @@ module.exports = {
         };
         var sort = {};
         sort[req.query.orderBy.replace("[", ".").replace("]", "")] = req.query.order === 'asc' ? -1 : 1;
+        console.log(req.query.operador)
         try {
             const documents = await partesModel.aggregate([
                 //Matchea los operadores y contratos por ID. Es un prefiltro. Al final se vuelve a realizar el filtro con el nombre, 
